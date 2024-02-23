@@ -1,0 +1,30 @@
+.css-16k4q1o-JoyDrawer-content {
+  border-top-right-radius: 20px !important;
+  border-bottom-right-radius: 20px !important;
+}
+
+.css-ta4b9y-JoyDrawer-backdrop {
+  opacity: 0 !important;
+}
+
+// its a user list
+.user-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  .UserList {
+    .users-items {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 28px;
+
+      .delete-svg {
+        position: absolute;
+        right: 32px;
+        cursor: pointer;
+      }
+    }
+  }
+}

@@ -1,0 +1,153 @@
+.container {
+  display: flex;
+  justify-content: center;
+
+  .User-Info-Section {
+    display: flex;
+    gap: 19px;
+    margin-top: -127px;
+    margin-left: 255px;
+    align-items: center;
+  }
+
+  .avatar-div {
+    position: relative;
+    left: 32px;
+    top: 35px;
+    width: 1px;
+  }
+
+  .info-texts {
+    display: flex;
+    margin-top: 15px;
+    position: relative;
+    gap: 35px;
+    left: 256px;
+  }
+
+  .desc-section {
+    position: relative;
+    left: 254px;
+    top: 19px;
+    width: 687px;
+  }
+
+  .markdown-content {
+    p,
+    span,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    em,
+    b {
+      font-size: 13px;
+    }
+  }
+}
+
+.group {
+  display: flex;
+  line-height: 28px;
+  align-items: center;
+  position: relative;
+  max-width: 437px;
+}
+
+.input {
+  width: 312px;
+  height: 40px;
+  line-height: 28px;
+  padding: 0 1rem;
+  padding-left: 2.5rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  background-color: #f3f3f4;
+  color: #0d0c22;
+  transition: 0.3s ease;
+}
+
+.input::placeholder {
+  color: #9e9ea7;
+}
+
+.icon {
+  position: absolute;
+  left: 1rem;
+  fill: #9e9ea7;
+  width: 1rem;
+  height: 1rem;
+}
+
+.user-content {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 27px;
+  flex-direction: column;
+  gap: 14px;
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    justify-content: center;
+  }
+}
+
+.close-profile-container {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 16px;
+}
+
+.card-wrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-left: 100px;
+  margin-top: -11px;
+  gap: 5px;
+  row-gap: 162px;
+
+  .Another-Card-Container {
+    width: 317px;
+    height: 98px;
+    cursor: pointer;
+    position: relative;
+
+    .hover-content {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 255px;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      background-color: rgba(0, 0, 0, 0.5);
+      background-size: 100%;
+
+      span {
+        color: white;
+      }
+    }
+
+    &:hover .hover-content {
+      display: flex;
+    }
+
+    img {
+      width: 317px;
+      height: 255px;
+
+      &:hover {
+        filter: brightness(0.8);
+      }
+    }
+  }
+}

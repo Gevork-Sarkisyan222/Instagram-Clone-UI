@@ -1,0 +1,130 @@
+.image-place {
+  display: flex;
+  width: 600px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.Comments-Section {
+  position: absolute;
+  right: 0;
+
+  .user-area {
+    display: flex;
+    gap: 5px;
+    margin-right: 322px;
+    margin-top: -12px;
+    align-items: center;
+
+    .check-mark {
+      width: 12px;
+      height: 12px;
+    }
+
+    span {
+      font-size: 14px;
+    }
+
+    .createdAt-text {
+      position: absolute;
+      right: 20px;
+      top: -8px;
+    }
+  }
+
+  .line {
+    width: 497px;
+    height: 1px;
+    margin-left: 338px;
+    margin-top: 14px;
+    display: flex;
+  }
+
+  .comments-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 23px;
+    overflow: auto;
+    max-height: 330px;
+
+    // its a chat content
+    .comment-content {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+
+      span {
+        font-size: 14px;
+      }
+
+      .comment-area {
+        width: 328px;
+      }
+    }
+  }
+}
+
+.second-line {
+  width: 497px;
+  height: 1px;
+  display: flex;
+  background-color: lightgray;
+  top: 388px;
+  right: 7px;
+  position: absolute;
+}
+
+.icons-and-content {
+  margin-top: 23px;
+  margin-left: -6px;
+}
+
+.liked-count {
+  font-size: 13px;
+  margin-left: 4px;
+  margin-top: 3px;
+}
+
+.viewers-count {
+  font-size: 13px;
+  margin-left: 4px;
+  margin-top: 4px;
+  color: grey;
+}
+
+.write-area {
+  .input-container input[type='text'] {
+    font-size: 14px;
+    width: 333px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    padding: 5px 3px;
+    background-color: transparent;
+    outline: none;
+    border-bottom: none;
+  }
+
+  .input-container .label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #ccc;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+
+  .input-container input[type='text']:focus ~ .label,
+  .input-container input[type='text']:valid ~ .label {
+    top: -20px;
+    font-size: 16px;
+    color: #333;
+  }
+
+  .input-container input[type='text']:focus ~ .underline,
+  .input-container input[type='text']:valid ~ .underline {
+    transform: scaleX(1);
+  }
+}

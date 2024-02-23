@@ -1,0 +1,37 @@
+.paper-main {
+  width: 319px;
+  height: 564px;
+  background-color: white;
+  margin-top: 18px;
+  padding: 10px;
+
+  .recommend-text {
+    margin-left: 23px;
+    color: #737380;
+    font-size: 14px;
+  }
+
+  .accaunt-items {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 28px;
+
+    h4 {
+      font-size: 14px;
+    }
+  }
+}
+
+.recommend-users {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 24px;
+
+  .recomend-users-box {
+    display: flex;
+    gap: 11px;
+    align-items: center;
+  }
+}
