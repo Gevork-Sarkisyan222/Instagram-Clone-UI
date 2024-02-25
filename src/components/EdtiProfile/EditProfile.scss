@@ -1,0 +1,38 @@
+.wrapper {
+  text-align: center;
+
+  //   .edit-content {
+  //     display: flex;
+  //     justify-content: center;
+  //     flex-direction: column;
+  //     margin-top: 40px;
+  //   }
+
+  .avatar-text {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .avatar-button {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -49px;
+  }
+
+  .desc {
+    margin-top: 100px;
+
+    h2 {
+      margin-top: 35px;
+      margin-right: 100px;
+    }
+  }
+}
+
+.make-private {
+  margin-top: 51px;
+
+  h2 {
+    margin-left: 76px;
+  }
+}

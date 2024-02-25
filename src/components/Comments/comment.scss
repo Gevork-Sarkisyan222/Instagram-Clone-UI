@@ -1,0 +1,14 @@
+.items {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .down-section {
+    display: flex;
+    flex-direction: column;
+
+    .createdAt-text {
+      color: grey;
+    }
+  }
+}
