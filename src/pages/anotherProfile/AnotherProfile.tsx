@@ -22,6 +22,41 @@ import { useSelector } from 'react-redux';
 import { isAuthenticated } from '../../redux/slices/user.slice';
 import { useParams, useRouteLoaderData } from 'react-router-dom';
 import axios from '../../axios';
+import Badge from '@mui/material/Badge';
+import { styled } from '@mui/material/styles';
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    backgroundColor: '#44b700',
+    color: '#44b700',
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    width: '18px',
+    height: '18px',
+    borderRadius: '20px',
+
+    '&::after': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      animation: 'ripple 1.2s infinite ease-in-out',
+      border: '1px solid currentColor',
+      content: '""',
+    },
+  },
+  '@keyframes ripple': {
+    '0%': {
+      transform: 'scale(.8)',
+      opacity: 1,
+    },
+    '100%': {
+      transform: 'scale(2.4)',
+      opacity: 0,
+    },
+  },
+}));
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -90,8 +125,13 @@ interface Post {
   comments: string[];
 }
 
-function AnotherProfile() {
-  const { id } = useParams();
+interface props {
+  isOnlineUser: string[];
+  setIsOnlineUser: React.Dispatch<React.SetStateAction<string[]>>;
+}
+
+const AnotherProfile: React.FC<props> = ({ isOnlineUser, setIsOnlineUser }) => {
+  const { id = '' } = useParams();
   console.log('params', id);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -203,6 +243,12 @@ function AnotherProfile() {
     return data
   }
 
+  const checkIfOnline = (userId: string) => {
+    return isOnlineUser.includes(userId);
+  };
+
+  const alreadyOnline = checkIfOnline(id);
+
 
 
   if (isAuthenticatedUser) {
@@ -309,11 +355,22 @@ function AnotherProfile() {
         <div className="container">
           <div>
             <div className="avatar-div">
-              <Avatar
+              {alreadyOnline ? <StyledBadge
+                overlap="circular"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                variant="dot"
+              >
+                <Avatar
+                  sx={{ width: '150px', height: '150px', cursor: 'pointer' }}
+                  alt={userData?.userName}
+                  src={userData?.avatarUrl ? userData?.avatarUrl : '/broken-image.jpg'}
+                />
+              </StyledBadge> : <Avatar
                 sx={{ width: '150px', height: '150px', cursor: 'pointer' }}
                 alt={userData?.userName}
                 src={userData?.avatarUrl ? userData?.avatarUrl : '/broken-image.jpg'}
-              />
+              />}
+
             </div>
             <section className="User-Info-Section">
               <h3 style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>

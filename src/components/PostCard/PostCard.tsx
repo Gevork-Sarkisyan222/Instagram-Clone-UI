@@ -20,6 +20,38 @@ import PostLikedUsersModal from '@mui/material/Modal';
 import ru from 'timeago.js/lib/lang/ru';
 import { format, register } from 'timeago.js';
 import axios from '../../axios';
+import Badge from '@mui/material/Badge';
+import { styled } from '@mui/material/styles';
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    backgroundColor: '#44b700',
+    color: '#44b700',
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    '&::after': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      animation: 'ripple 1.2s infinite ease-in-out',
+      border: '1px solid currentColor',
+      content: '""',
+    },
+  },
+  '@keyframes ripple': {
+    '0%': {
+      transform: 'scale(.8)',
+      opacity: 1,
+    },
+    '100%': {
+      transform: 'scale(2.4)',
+      opacity: 0,
+    },
+  },
+}));
+
 
 const styleForLikedUsersList = {
   position: 'absolute' as 'absolute',
@@ -43,7 +75,9 @@ type UserType = {
   userName: string;
 };
 
+
 interface ITypes {
+  alreadyOnline: boolean;
   id: string;
   imageUrl: string;
   desc: string;
@@ -52,6 +86,7 @@ interface ITypes {
   saves: string[];
   viewers: number;
   createdAt: string;
+  commentsPost: string[];
   user: UserType;
   checkMark: boolean;
 }
@@ -62,7 +97,15 @@ interface LikedUserTypes {
   avatarUrl: string;
 }
 
+interface CommentTypes {
+  _id: string;
+  text: string;
+  user: UserType;
+  createdAt: string
+}
+
 const PostCard: React.FC<ITypes> = ({
+  alreadyOnline,
   id,
   imageUrl,
   desc,
@@ -71,6 +114,7 @@ const PostCard: React.FC<ITypes> = ({
   saves,
   viewers,
   createdAt,
+  commentsPost,
   user,
   checkMark,
 }) => {
@@ -197,6 +241,42 @@ const PostCard: React.FC<ITypes> = ({
 
 
 
+  // rednder current comments
+  const [comments, setComments] = React.useState<CommentTypes[]>([])
+
+  React.useEffect(() => {
+    const fetchCurrentComments = async () => {
+      const res = await axios.get(`/post/comments/${id}`);
+      setComments(res.data);
+    };
+
+    fetchCurrentComments()
+  }, []);
+
+  // create comment 
+  const createComment = async () => {
+    try {
+      const res = await axios.post(`/post/comment/${id}`, { text: comment })
+      setComment('');
+      updateArrayComments()
+      return res.data
+    } catch (err) {
+      alert(`Не удалось создать комментарии символы большие или ${err}`)
+      console.warn(err)
+    }
+  }
+
+  // update array to see changes
+  const updateArrayComments = async () => {
+    try {
+      const res = await axios.get(`/post/comments/${id}`);
+      setComments(res.data);
+    } catch (error) {
+      console.error('Error updating comments:', error);
+    }
+  }
+
+
   return (
     <>
       {openFullPost && <FullPost />}
@@ -245,12 +325,20 @@ const PostCard: React.FC<ITypes> = ({
       </PostLikedUsersModal>
       <div className="instagram-card">
         <div className="instagram-card-header">
-          <Avatar
+          {currentUser._id !== user._id && alreadyOnline ? <StyledBadge
+            overlap="circular"
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            variant="dot"
+          >
+            <Avatar onClick={handleWentToProfile} sx={{ cursor: 'pointer' }} alt={user.userName} src={user.avatarUrl ? user.avatarUrl : '/broken-image.jpg'} />
+          </StyledBadge> : <Avatar
             onClick={handleWentToProfile}
             sx={{ cursor: 'pointer' }}
             alt={user.userName}
             src={user.avatarUrl ? user.avatarUrl : '/broken-image.jpg'}
-          />
+          />}
+
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
             <h4 onClick={handleWentToProfile} className="instagram-card-user-name">
               {user.userName}
@@ -320,16 +408,16 @@ const PostCard: React.FC<ITypes> = ({
             <span className="tags">{tags}</span>
           </p>
           <p onClick={toggleComments} className="comments" style={{ fontWeight: '400' }}>
-            Посмотреть все комментарии (54)
+            Посмотреть все комментарии ({commentsPost.length})
           </p>
           {openComments && (
             <>
               <div style={{ display: 'flex', gap: '12px', flexDirection: 'column' }}>
-                <Comment />
-                <Comment />
-                <Comment />
-                <Comment />
-                <Comment />
+                {
+                  comments.map((obj) => (
+                    <Comment key={obj._id} id={obj._id} user={obj.user} text={obj.text} createdAt={obj.createdAt} updateArrayComments={updateArrayComments} />
+                  ))
+                }
               </div>
             </>
           )}
@@ -351,7 +439,7 @@ const PostCard: React.FC<ITypes> = ({
             <i className="fa fa-ellipsis-h"></i>
           </a>
           {comment && (
-            <Button onClick={() => setComment('')} variant="text">
+            <Button onClick={createComment} variant="text">
               Опубликовать
             </Button>
           )}

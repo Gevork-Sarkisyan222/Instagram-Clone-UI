@@ -9,7 +9,11 @@ import Avatar from '@mui/material/Avatar';
 import { UserTypeForResponese } from '../../pages/Home';
 import axios from '../../axios';
 
-function RightPanel() {
+interface props {
+  isOnlineUser: string[]
+}
+
+const RightPanel: React.FC<props> = ({ isOnlineUser }) => {
   const { currentUser } = useSelector((state: any) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -39,6 +43,11 @@ function RightPanel() {
     navigate('/profile');
   };
 
+  const checkIfOnline = (userId: string) => {
+    return isOnlineUser.includes(userId);
+  };
+
+
   return (
     <div className="paper-main">
       <div className="accaunt-items">
@@ -60,6 +69,7 @@ function RightPanel() {
         {notSubscribedUser.map((obj) => (
           <RecommendUser
             key={obj._id}
+            alreadyOnline={checkIfOnline(obj._id)}
             id={obj._id}
             userName={obj.userName}
             avatarUrl={obj.avatarUrl}

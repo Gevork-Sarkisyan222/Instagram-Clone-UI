@@ -63,6 +63,14 @@ interface FullPostType {
   user: UserType[];
 }
 
+interface CommentTypes {
+  _id: string;
+  text: string;
+  user: any;
+  createdAt: string
+}
+
+
 const PostInfoBox: React.FC<idType> = ({ id }) => {
   const [post, setPost] = React.useState<any>([]);
   const { currentUser } = useSelector((state: any) => state.user);
@@ -183,6 +191,43 @@ const PostInfoBox: React.FC<idType> = ({ id }) => {
     }
   }, [currentUser.savedPosts, id]);
 
+  // rednder current comments
+  const [comments, setComments] = React.useState<CommentTypes[]>([])
+
+  React.useEffect(() => {
+    const fetchCurrentComments = async () => {
+      const res = await axios.get(`/post/comments/${id}`);
+      setComments(res.data);
+    };
+
+    fetchCurrentComments()
+  }, []);
+
+  // create comment 
+  const createComment = async () => {
+    try {
+      const res = await axios.post(`/post/comment/${id}`, { text: comment })
+      setComment('');
+      updateArrayComments()
+      return res.data
+    } catch (err) {
+      alert(`Не удалось создать комментарии символы большие или ${err}`)
+      console.warn(err)
+    }
+  }
+
+  // update array to see changes
+  const updateArrayComments = async () => {
+    try {
+      const res = await axios.get(`/post/comments/${id}`);
+      setComments(res.data);
+    } catch (error) {
+      console.error('Error updating comments:', error);
+    }
+  }
+
+
+
   return (
     <>
       <PostLikedUsersModal
@@ -266,44 +311,42 @@ const PostInfoBox: React.FC<idType> = ({ id }) => {
           </div>
           <div className="line"></div>
           <section className="comments-section">
-            <CommentSection />
-            <CommentSection />
-            <CommentSection />
-            <CommentSection />
-            <CommentSection />
-            <CommentSection />
-            <CommentSection />
-            <CommentSection />
+            {comments.map((obj) => (
+              <CommentSection key={obj._id} id={obj._id} user={obj.user} text={obj.text} createdAt={obj.createdAt} updateArrayComments={updateArrayComments} />
+            ))}
+
           </section>
           <div className="second-line"></div>
-          <div className="icons-and-content">
-            <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite sx={{ color: 'red' }} />} checked={liked} onClick={handleCheckboxClickToLike} />
-            <Checkbox
-              icon={<BookmarkBorderIcon />}
-              checked={saved}
-              onClick={handleCheckboxClickToSave}
-              checkedIcon={<BookmarkIcon sx={{ color: 'black' }} />}
-            />
-          </div>
-          <p onClick={handleOpen} style={{ cursor: 'pointer' }} className="liked-count">
-            {post?.likes?.length} отметок "Нравится"
-          </p>
-          <p className="viewers-count">{post?.viewers} просмотров</p>
-          <div className="input-line"></div>
-          <div className="write-area">
-            <div className="input-container">
-              <input
-                value={comment}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setComment(e.target.value)}
-                id="input"
-                type="text"
-                placeholder="Добавьте комментарий..."
+          <div style={{ position: 'absolute', top: '94px', left: '-4px' }}>
+            <div className="icons-and-content">
+              <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite sx={{ color: 'red' }} />} checked={liked} onClick={handleCheckboxClickToLike} />
+              <Checkbox
+                icon={<BookmarkBorderIcon />}
+                checked={saved}
+                onClick={handleCheckboxClickToSave}
+                checkedIcon={<BookmarkIcon sx={{ color: 'black' }} />}
               />
-              {comment && (
-                <Button onClick={() => setComment('')} variant="text">
-                  <span>Опубликовать</span>
-                </Button>
-              )}
+            </div>
+            <p onClick={handleOpen} style={{ cursor: 'pointer' }} className="liked-count">
+              {post?.likes?.length} отметок "Нравится"
+            </p>
+            <p className="viewers-count">{post?.viewers} просмотров</p>
+            <div className="input-line"></div>
+            <div className="write-area">
+              <div className="input-container">
+                <input
+                  value={comment}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setComment(e.target.value)}
+                  id="input"
+                  type="text"
+                  placeholder="Добавьте комментарий..."
+                />
+                {comment && (
+                  <Button sx={{ top: '-24px', left: '334px' }} onClick={createComment} variant="text">
+                    <span>Опубликовать</span>
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>

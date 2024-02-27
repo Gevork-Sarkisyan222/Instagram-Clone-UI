@@ -22,6 +22,7 @@ function App() {
   const isAuthenticatedUser = useSelector(isAuthenticated);
   const location = useLocation();
   const dispatch = useDispatch();
+  const socket = React.useRef();
 
   const isLocation = location.pathname === '/login' || location.pathname === '/register';
 
@@ -29,16 +30,19 @@ function App() {
     dispatch(fetchAuthMe());
   }, []);
 
+  const [isOnlineUser, setIsOnlineUser] = React.useState<string[]>([]);
+
+
   return (
     <div className="App">
       {!isLocation && isAuthenticatedUser && <DrawerLeft />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home socket={socket} isOnlineUser={isOnlineUser} setIsOnlineUser={setIsOnlineUser} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         {/* <Route path="/post/:id" element={<FullPost />} /> */}
-        <Route path="/profile/:id" element={<AnotherProfile />} />
+        <Route path="/profile/:id" element={<AnotherProfile isOnlineUser={isOnlineUser} setIsOnlineUser={setIsOnlineUser} />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

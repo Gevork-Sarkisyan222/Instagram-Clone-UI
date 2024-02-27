@@ -8,6 +8,38 @@ import { useSelector } from 'react-redux';
 import { isAuthenticated } from '../redux/slices/user.slice';
 import ErrorToLogin from '../components/ErrorToLogin';
 import axios from '.././axios';
+import { io, Socket } from 'socket.io-client';
+import Badge from '@mui/material/Badge';
+import { styled } from '@mui/material/styles';
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    backgroundColor: '#44b700',
+    color: '#44b700',
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    '&::after': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      animation: 'ripple 1.2s infinite ease-in-out',
+      border: '1px solid currentColor',
+      content: '""',
+    },
+  },
+  '@keyframes ripple': {
+    '0%': {
+      transform: 'scale(.8)',
+      opacity: 1,
+    },
+    '100%': {
+      transform: 'scale(2.4)',
+      opacity: 0,
+    },
+  },
+}));
 
 type UserType = {
   avatarUrl?: string;
@@ -32,7 +64,13 @@ export type UserTypeForResponese = {
   avatarUrl: string;
 };
 
-const Home: React.FC = () => {
+interface PropsTypes {
+  socket: any
+  isOnlineUser: string[];
+  setIsOnlineUser: React.Dispatch<React.SetStateAction<string[]>>;
+}
+
+const Home: React.FC<PropsTypes> = ({ socket, isOnlineUser, setIsOnlineUser }) => {
   const isAuthenticatedUser = useSelector(isAuthenticated);
   const [posts, setPosts] = React.useState<Post[]>([]);
   const [yourSubscribed, setYourSubscribed] = React.useState<UserTypeForResponese[]>([]);
@@ -56,12 +94,41 @@ const Home: React.FC = () => {
     fetchPosts();
   }, []);
 
+
+  React.useEffect(() => {
+    socket.current = io('https://socket-server-v9ni.onrender.com');
+  }, []);
+
+  React.useEffect(() => {
+    isAuthenticatedUser && socket.current?.emit('addUser', currentUser?._id);
+    socket.current?.on('getUsers', (users: any) => {
+      console.log(users.length)
+      console.log(
+        'users id array',
+        users,
+        users.map((user: any) => user.userId),
+      );
+      setIsOnlineUser(users.map((user: any) => user.userId));
+    });
+  }, [currentUser]);
+
+
+  const checkIfOnline = (userId: any) => {
+    return isOnlineUser.includes(userId);
+  };
+
+
+
+  console.log('online users >', isOnlineUser);
+  console.log(currentUser?._id === isOnlineUser.toString());
+  console.log('online user', currentUser?._id, isOnlineUser.toString());
+
   if (isAuthenticatedUser) {
     return (
       <div>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <div style={{ position: 'absolute' }}>
-            <RightPanel />
+            <RightPanel isOnlineUser={isOnlineUser} />
           </div>
         </div>
         <div className="main">
@@ -70,11 +137,23 @@ const Home: React.FC = () => {
               {/* 9 avatars */}
               {yourSubscribed.map((obj) => (
                 <Link key={obj._id} to={`/profile/${obj?._id}`}>
-                  <Avatar
-                    sx={{ width: '56px', height: '56px', cursor: 'pointer' }}
-                    alt={obj?.userName}
-                    src={obj?.avatarUrl ? obj?.avatarUrl : '/broken-image.jpg'}
-                  />
+                  {
+                    checkIfOnline(obj._id) ? <div><StyledBadge
+                      overlap="circular"
+                      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                      variant="dot"
+                    ><Avatar
+                        sx={{ width: '56px', height: '56px', cursor: 'pointer' }}
+                        alt={obj?.userName}
+                        src={obj?.avatarUrl ? obj?.avatarUrl : '/broken-image.jpg'}
+                      />
+                    </StyledBadge></div> : <Avatar
+                      sx={{ width: '56px', height: '56px', cursor: 'pointer' }}
+                      alt={obj?.userName}
+                      src={obj?.avatarUrl ? obj?.avatarUrl : '/broken-image.jpg'}
+                    />
+                  }
+
                 </Link>
               ))}
             </div>
@@ -83,6 +162,7 @@ const Home: React.FC = () => {
             {posts.map((obj: any) => (
               <PostCard
                 key={obj._id}
+                alreadyOnline={checkIfOnline(obj.user._id)}
                 id={obj._id}
                 imageUrl={obj.imageUrl}
                 desc={obj.desc}
@@ -90,6 +170,7 @@ const Home: React.FC = () => {
                 likes={obj.likes}
                 saves={obj.saves}
                 viewers={obj.viewers}
+                commentsPost={obj.comments}
                 createdAt={obj.createdAt}
                 user={obj.user}
                 checkMark={obj.checkMark}

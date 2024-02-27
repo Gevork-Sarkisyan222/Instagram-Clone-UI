@@ -9,7 +9,8 @@
 
 .Comments-Section {
   position: absolute;
-  right: 0;
+  right: 58px;
+
 
   .user-area {
     display: flex;
@@ -62,6 +63,9 @@
 
       .comment-area {
         width: 328px;
+        display: flex;
+        align-items: center;
+        gap: 10px
       }
     }
   }
@@ -73,12 +77,12 @@
   display: flex;
   background-color: lightgray;
   top: 388px;
-  right: 7px;
+  right: -47px;
   position: absolute;
 }
 
 .icons-and-content {
-  margin-top: 23px;
+  margin-top: 308px;
   margin-left: -6px;
 }
 
@@ -116,15 +120,15 @@
     pointer-events: none;
   }
 
-  .input-container input[type='text']:focus ~ .label,
-  .input-container input[type='text']:valid ~ .label {
+  .input-container input[type='text']:focus~.label,
+  .input-container input[type='text']:valid~.label {
     top: -20px;
     font-size: 16px;
     color: #333;
   }
 
-  .input-container input[type='text']:focus ~ .underline,
-  .input-container input[type='text']:valid ~ .underline {
+  .input-container input[type='text']:focus~.underline,
+  .input-container input[type='text']:valid~.underline {
     transform: scaleX(1);
   }
 }
