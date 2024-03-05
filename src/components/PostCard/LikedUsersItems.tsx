@@ -28,6 +28,7 @@ const LikedUsersItems: React.FC<Props> = ({ id, userName, avatarUrl }) => {
     dispatch(setCloseFullPost());
   };
 
+
   return (
     <>
       <div style={{ justifyContent: 'center' }} className="item">
@@ -40,15 +41,17 @@ const LikedUsersItems: React.FC<Props> = ({ id, userName, avatarUrl }) => {
         <span style={{ cursor: 'pointer' }} onClick={handleWentToProfile}>
           {userName}
         </span>
-        {subscribe ? (
-          <MuiButton variant="text" onClick={() => setSubscribe(false)}>
-            Отписаться
-          </MuiButton>
-        ) : (
-          <MuiButton variant="text" onClick={() => setSubscribe(true)}>
-            Подписаться
-          </MuiButton>
-        )}
+        {currentUser._id !== id ? (
+          subscribe ? (
+            <MuiButton variant="text" onClick={() => setSubscribe(false)}>
+              Отписаться
+            </MuiButton>
+          ) : (
+            <MuiButton variant="text" onClick={() => setSubscribe(true)}>
+              Подписаться
+            </MuiButton>
+          )
+        ) : null}
       </div>
     </>
   );

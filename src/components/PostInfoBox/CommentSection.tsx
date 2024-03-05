@@ -51,7 +51,11 @@ const UserComment: React.FC<props> = ({ id, user, text, createdAt, updateArrayCo
   const dispatch = useDispatch();
 
   const handleWentToProfile = () => {
-    navigate(`/profile/${user._id}`);
+    if (currentUser?._id === user._id) {
+      navigate('/profile')
+    } else {
+      navigate(`/profile/${user._id}`);
+    }
     dispatch(setCloseFullPost());
   };
 

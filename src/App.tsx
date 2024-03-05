@@ -17,6 +17,7 @@ import { fetchAuthMe, isAuthenticated } from './redux/slices/user.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from './axios';
 import FullPost from './components/FullPost/FullPost';
+import Chat from './pages/chat/Chat';
 
 function App() {
   const isAuthenticatedUser = useSelector(isAuthenticated);
@@ -44,6 +45,7 @@ function App() {
         {/* <Route path="/post/:id" element={<FullPost />} /> */}
         <Route path="/profile/:id" element={<AnotherProfile isOnlineUser={isOnlineUser} setIsOnlineUser={setIsOnlineUser} />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/chat" element={<Chat socket={socket} isOnlineUser={isOnlineUser} setIsOnlineUser={setIsOnlineUser} />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>

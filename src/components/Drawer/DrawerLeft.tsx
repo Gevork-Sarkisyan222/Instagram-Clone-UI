@@ -31,7 +31,7 @@ import SearchUserDrawer from '@mui/joy/Drawer';
 import ModalClose from '@mui/joy/ModalClose';
 import Menu from '@mui/icons-material/Menu';
 import Search from '@mui/icons-material/Search';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import PostModal from '../PostModal/PostModal';
 import SearchUser from '../SearchUser/SearchUser';
 import { useSelector } from 'react-redux';
@@ -42,6 +42,7 @@ function DrawerLeft() {
   const [openPostModal, setOpenPostModal] = React.useState(false);
   const handleOpenPostModal = () => setOpenPostModal(true);
   const handleClosePostModal = () => setOpenPostModal(false);
+  const location = useLocation()
 
   const [openSearchDrawer, setOpenSearchDrawer] = React.useState(false);
 
@@ -54,6 +55,9 @@ function DrawerLeft() {
     };
     fetchSearhUsers();
   }, []);
+
+
+  const isChatRoute = location.pathname === '/chat'
 
   return (
     <>
@@ -77,7 +81,7 @@ function DrawerLeft() {
         sx={{ width: 300, marginLeft: '8px', marginTop: '22px', position: 'fixed' }}
         role="presentation">
         {/* <h2 className="instagram-text">Instagram</h2> */}
-        <div className="instagram-text">
+        {!isChatRoute && <div className="instagram-text">
           <div style={{ opacity: 1 }}>
             <Link
               style={{ color: 'black', textDecoration: 'none' }}
@@ -106,7 +110,7 @@ function DrawerLeft() {
               </div>
             </Link>
           </div>
-        </div>
+        </div>}
         <Link to="/" style={{ textDecoration: 'none', color: '#333' }}>
           <List>
             <ListItem sx={{ width: '248px' }} disablePadding>
@@ -213,35 +217,37 @@ function DrawerLeft() {
             </ListItem>
           </List>
         </Link>
-        <List>
-          <ListItem sx={{ width: '248px' }} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <svg
-                  aria-label="Messenger"
-                  className="x1lliihq x1n2onr6 x5n08af"
-                  fill="currentColor"
-                  height="24"
-                  role="img"
-                  viewBox="0 0 24 24"
-                  width="24">
-                  <title>Messenger</title>
-                  <path
-                    d="M12.003 2.001a9.705 9.705 0 1 1 0 19.4 10.876 10.876 0 0 1-2.895-.384.798.798 0 0 0-.533.04l-1.984.876a.801.801 0 0 1-1.123-.708l-.054-1.78a.806.806 0 0 0-.27-.569 9.49 9.49 0 0 1-3.14-7.175 9.65 9.65 0 0 1 10-9.7Z"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-miterlimit="10"
-                    stroke-width="1.739"></path>
-                  <path
-                    d="M17.79 10.132a.659.659 0 0 0-.962-.873l-2.556 2.05a.63.63 0 0 1-.758.002L11.06 9.47a1.576 1.576 0 0 0-2.277.42l-2.567 3.98a.659.659 0 0 0 .961.875l2.556-2.049a.63.63 0 0 1 .759-.002l2.452 1.84a1.576 1.576 0 0 0 2.278-.42Z"
-                    fill-rule="evenodd"></path>
-                </svg>
-              </ListItemIcon>
-              Сообшение
-              <ListItemText />
-            </ListItemButton>
-          </ListItem>
-        </List>
+        <Link to='/chat' style={{ textDecoration: 'none', color: '#333' }}>
+          <List>
+            <ListItem sx={{ width: '248px' }} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <svg
+                    aria-label="Messenger"
+                    className="x1lliihq x1n2onr6 x5n08af"
+                    fill="currentColor"
+                    height="24"
+                    role="img"
+                    viewBox="0 0 24 24"
+                    width="24">
+                    <title>Messenger</title>
+                    <path
+                      d="M12.003 2.001a9.705 9.705 0 1 1 0 19.4 10.876 10.876 0 0 1-2.895-.384.798.798 0 0 0-.533.04l-1.984.876a.801.801 0 0 1-1.123-.708l-.054-1.78a.806.806 0 0 0-.27-.569 9.49 9.49 0 0 1-3.14-7.175 9.65 9.65 0 0 1 10-9.7Z"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-miterlimit="10"
+                      stroke-width="1.739"></path>
+                    <path
+                      d="M17.79 10.132a.659.659 0 0 0-.962-.873l-2.556 2.05a.63.63 0 0 1-.758.002L11.06 9.47a1.576 1.576 0 0 0-2.277.42l-2.567 3.98a.659.659 0 0 0 .961.875l2.556-2.049a.63.63 0 0 1 .759-.002l2.452 1.84a1.576 1.576 0 0 0 2.278-.42Z"
+                      fill-rule="evenodd"></path>
+                  </svg>
+                </ListItemIcon>
+                Сообшение
+                <ListItemText />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Link>
         <List>
           <ListItem sx={{ width: '248px' }} disablePadding>
             <ListItemButton onClick={handleOpenPostModal}>
@@ -294,11 +300,17 @@ function DrawerLeft() {
             <ListItem sx={{ width: '248px' }} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
-                  <Avatar
+                  {isChatRoute && <Avatar
+                    sx={{ cursor: 'pointer', width: '36px', height: '36px' }}
+                    alt={currentUser.userName}
+                    src={currentUser.avatarUrl ? currentUser.avatarUrl : '/broken-image.jpg'}
+                  />}
+                  {!isChatRoute && <Avatar
                     sx={{ cursor: 'pointer' }}
                     alt={currentUser.userName}
                     src={currentUser.avatarUrl ? currentUser.avatarUrl : '/broken-image.jpg'}
-                  />
+                  />}
+
                 </ListItemIcon>
                 Профиль
                 <ListItemText />

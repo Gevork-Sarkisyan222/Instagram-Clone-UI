@@ -317,7 +317,7 @@ const PostInfoBox: React.FC<idType> = ({ id }) => {
 
           </section>
           <div className="second-line"></div>
-          <div style={{ position: 'absolute', top: '94px', left: '-4px' }}>
+          <div style={{ position: 'absolute', top: '94px', left: '-4px', height: '1px' }}>
             <div className="icons-and-content">
               <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite sx={{ color: 'red' }} />} checked={liked} onClick={handleCheckboxClickToLike} />
               <Checkbox

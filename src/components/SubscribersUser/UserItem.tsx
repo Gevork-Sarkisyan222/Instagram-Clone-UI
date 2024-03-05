@@ -19,7 +19,11 @@ const UserItem: React.FC<IProps> = ({ id, userName, avatarUrl }) => {
   const navigate = useNavigate();
 
   const handleWentToProfile = () => {
-    navigate(`/profile/${id}`);
+    if (currentUser?._id === id) {
+      navigate(`/profile`);
+    } else {
+      navigate(`/profile/${id}`);
+    }
   };
 
 

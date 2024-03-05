@@ -20,7 +20,7 @@ import SubscribedAnother from './SubscribedAnother';
 import ErrorToLogin from '../../components/ErrorToLogin';
 import { useSelector } from 'react-redux';
 import { isAuthenticated } from '../../redux/slices/user.slice';
-import { useParams, useRouteLoaderData } from 'react-router-dom';
+import { useNavigate, useParams, useRouteLoaderData } from 'react-router-dom';
 import axios from '../../axios';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
@@ -137,6 +137,7 @@ const AnotherProfile: React.FC<props> = ({ isOnlineUser, setIsOnlineUser }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [subscribe, setSubscribe] = React.useState(false);
+  const navigate = useNavigate()
 
   //
   const [openLast, setOpenLast] = React.useState(false);
@@ -250,6 +251,16 @@ const AnotherProfile: React.FC<props> = ({ isOnlineUser, setIsOnlineUser }) => {
   const alreadyOnline = checkIfOnline(id);
 
 
+  const createConversation = async () => {
+    try {
+      const res = await axios.post('/chat/conversation', { senderId: currentUser?._id, reciverId: id });
+      navigate('/chat')
+      return res.data
+    } catch (err) {
+      console.warn(err)
+      navigate('/chat')
+    }
+  }
 
   if (isAuthenticatedUser) {
     return (
@@ -419,6 +430,7 @@ const AnotherProfile: React.FC<props> = ({ isOnlineUser, setIsOnlineUser }) => {
               }
 
               <Button
+                onClick={createConversation}
                 sx={{
                   width: '178px',
                   height: '32px',

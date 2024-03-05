@@ -4,6 +4,7 @@ import { Button } from '@mui/joy';
 import Avatar from '@mui/material/Avatar';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from '../../axios'
+import { useSelector } from 'react-redux';
 
 interface IProps {
   id: string;
@@ -13,6 +14,7 @@ interface IProps {
 
 const UserLastItem: React.FC<IProps> = ({ id, userName, avatarUrl }) => {
   const [subscribe, setSubscribe] = React.useState(false);
+  const { currentUser } = useSelector((state: any) => state.user)
 
   const deleteUser = () => {
     const message = window.confirm('Вы действительно хотите удалить пользователся?');
@@ -25,7 +27,11 @@ const UserLastItem: React.FC<IProps> = ({ id, userName, avatarUrl }) => {
   const navigate = useNavigate();
 
   const handleWentToProfile = () => {
-    navigate(`/profile/${id}`);
+    if (currentUser?._id === id) {
+      navigate('/profile')
+    } else {
+      navigate(`/profile/${id}`);
+    }
   };
 
 

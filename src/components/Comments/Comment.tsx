@@ -51,7 +51,11 @@ const Comment: React.FC<props> = ({ id, user, text, createdAt, updateArrayCommen
   const navigate = useNavigate();
 
   const handleWentToProfile = () => {
-    navigate(`/profile/${user._id}`);
+    if (currentUser?._id === user._id) {
+      navigate('/profile')
+    } else {
+      navigate(`/profile/${user._id}`);
+    }
   };
 
   register('ru', ru);
