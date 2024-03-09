@@ -14,6 +14,7 @@ import { isAuthenticated } from '../../redux/slices/user.slice';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import ErrorToLogin from '../../components/ErrorToLogin';
+import { io } from 'socket.io-client'
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -50,6 +51,7 @@ type MessageType = {
     _id: string;
     sender: string;
     text: string;
+    conversationId: string
     createdAt: string
 }
 
@@ -74,6 +76,67 @@ const Chat: React.FC<PropsTypes> = ({ socket, isOnlineUser, setIsOnlineUser }) =
     const [convUser, setConvUser] = React.useState<any>([])
     const navigate = useNavigate();
     const [messageText, setMessageText] = React.useState('')
+    const scrollRef = React.useRef<HTMLDivElement | null>(null)
+    const [arrivalMessage, setArrivalMessage] = React.useState<any>(null)
+    const [editedMessage, setEditedMessage] = React.useState('')
+
+
+    console.log('arrivalMessage', arrivalMessage)
+
+    // get deleted message
+    // React.useEffect(() => {
+    //     socket.current?.on('messageDeletedInstagram', (data: any) => {
+    //         setArrivalMessage([]);
+    //         // setMessages((prev) => prev.filter((msg) => msg._id !== data.messageId));
+    //     });
+    // });
+    React.useEffect(() => {
+        socket.current?.on('messageDeletedInstagram', (data: any) => {
+            setMessages((prevMessages: any) => prevMessages.filter((message: any) => message._id !== data.messageId));
+        });
+
+        return () => {
+            socket.current?.off('messageDeletedInstagram');
+        };
+    }, [socket]);
+
+    // edit message
+    React.useEffect(() => {
+        socket.current?.on('messageEditedInstagram', (data: any) => {
+            setMessages((prevMessages) => {
+                return prevMessages.map((message) =>
+                    message._id === data.messageId ? { ...message, text: data.editedMessage } : message,
+                );
+            });
+        });
+
+        return () => {
+            socket.current?.off('messageEditedInstagram');
+        };
+    }, [socket, setMessages])
+
+
+    // get message
+    React.useEffect(() => {
+        socket.current?.on('getMessageInstagram', (data: any) => {
+            setArrivalMessage({
+                sender: data.senderId,
+                text: data.text,
+                createdAt: Date.now()
+            });
+        });
+    }, [socket]);
+
+    React.useEffect(() => {
+        arrivalMessage && currentChat?.members.includes(arrivalMessage.sender)
+            && setMessages((prev) => [...prev, arrivalMessage])
+    }, [arrivalMessage, currentChat])
+
+
+
+    React.useEffect(() => {
+        scrollRef?.current?.scrollIntoView({ behavior: 'smooth' })
+    }, [messages])
 
     React.useEffect(() => {
         socket.current?.on('getUsers', (users: any) => {
@@ -92,8 +155,6 @@ const Chat: React.FC<PropsTypes> = ({ socket, isOnlineUser, setIsOnlineUser }) =
             navigate(`/profile/${convUser?._id}`)
         }
     }
-
-
 
     React.useEffect(() => {
         const getUserConversations = async () => {
@@ -122,8 +183,8 @@ const Chat: React.FC<PropsTypes> = ({ socket, isOnlineUser, setIsOnlineUser }) =
             }
         }
 
-        getMessages()
-    })
+        getMessages();
+    }, [currentChat])
 
 
     React.useEffect(() => {
@@ -141,8 +202,17 @@ const Chat: React.FC<PropsTypes> = ({ socket, isOnlineUser, setIsOnlineUser }) =
     }, [currentChat])
 
 
-
     const createMessage = async () => {
+        const receiverId = currentChat?.members.find(
+            (member: any) => member !== currentUser?._id
+        );
+
+        await socket.current.emit('sendMessageInstagram', {
+            senderId: currentUser?._id,
+            receiverId,
+            text: messageText
+        })
+
         try {
             const res = await axios.post('/chat/conversation/message', {
                 conversationId: currentChat?._id,
@@ -150,6 +220,7 @@ const Chat: React.FC<PropsTypes> = ({ socket, isOnlineUser, setIsOnlineUser }) =
                 text: messageText
             })
             setMessageText('')
+            setMessages((prev) => [...prev, res.data]);
             return res.data
         } catch (err) {
             console.warn(err)
@@ -177,8 +248,9 @@ const Chat: React.FC<PropsTypes> = ({ socket, isOnlineUser, setIsOnlineUser }) =
     }
 
 
-
     const alreadyOnline = checkIfOnline(convUser?._id)
+    console.log('arrivalMessage after', arrivalMessage)
+
 
     if (isAuthenticatedUser) {
         return (
@@ -217,7 +289,9 @@ const Chat: React.FC<PropsTypes> = ({ socket, isOnlineUser, setIsOnlineUser }) =
                             <div className='Chat-Area'>
                                 <div style={{ display: 'flex', marginTop: '15px', flexDirection: 'column', gap: '15px' }}>
                                     {messages.length === 0 ? <div><h1 style={{ textAlign: 'center', color: "grey" }}>Сообшение пустые напишите что то</h1></div> : messages.map((message: any) => (
-                                        <MessageSection key={message._id} message={message} own={message.sender === currentUser._id} />
+                                        <div ref={scrollRef}>
+                                            <MessageSection key={message._id} message={message} own={message.sender === currentUser._id} setMessages={setMessages} socket={socket} currentChat={currentChat} editedMessage={editedMessage} setEditedMessage={setEditedMessage} />
+                                        </div>
                                     ))}
                                 </div>
                             </div>

@@ -18,27 +18,45 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from './axios';
 import FullPost from './components/FullPost/FullPost';
 import Chat from './pages/chat/Chat';
+import { io, Socket } from 'socket.io-client';
+
 
 function App() {
   const isAuthenticatedUser = useSelector(isAuthenticated);
+  const { currentUser } = useSelector((state: any) => state.user)
   const location = useLocation();
   const dispatch = useDispatch();
-  const socket = React.useRef();
+  const [isOnlineUser, setIsOnlineUser] = React.useState<string[]>([]);
+  const socket = React.useRef<Socket>();
 
   const isLocation = location.pathname === '/login' || location.pathname === '/register';
 
   React.useEffect(() => {
     dispatch(fetchAuthMe());
+    socket.current = io('https://socket-server-v9ni.onrender.com');
   }, []);
 
-  const [isOnlineUser, setIsOnlineUser] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    isAuthenticatedUser && socket.current?.emit('addUser', currentUser?._id);
+    socket.current?.on('getUsers', (users: any) => {
+      console.log(users.length)
+      console.log(
+        'users id array',
+        users,
+        users.map((user: any) => user.userId),
+      );
+      setIsOnlineUser(users.map((user: any) => user.userId));
+    });
+  }, [currentUser]);
+
 
 
   return (
     <div className="App">
       {!isLocation && isAuthenticatedUser && <DrawerLeft />}
       <Routes>
-        <Route path="/" element={<Home socket={socket} isOnlineUser={isOnlineUser} setIsOnlineUser={setIsOnlineUser} />} />
+        <Route path="/" element={<Home isOnlineUser={isOnlineUser} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />

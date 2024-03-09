@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import { isAuthenticated } from '../redux/slices/user.slice';
 import ErrorToLogin from '../components/ErrorToLogin';
 import axios from '.././axios';
-import { io, Socket } from 'socket.io-client';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 
@@ -65,12 +64,10 @@ export type UserTypeForResponese = {
 };
 
 interface PropsTypes {
-  socket: any
   isOnlineUser: string[];
-  setIsOnlineUser: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-const Home: React.FC<PropsTypes> = ({ socket, isOnlineUser, setIsOnlineUser }) => {
+const Home: React.FC<PropsTypes> = ({ isOnlineUser }) => {
   const isAuthenticatedUser = useSelector(isAuthenticated);
   const [posts, setPosts] = React.useState<Post[]>([]);
   const [yourSubscribed, setYourSubscribed] = React.useState<UserTypeForResponese[]>([]);
@@ -94,23 +91,6 @@ const Home: React.FC<PropsTypes> = ({ socket, isOnlineUser, setIsOnlineUser }) =
     fetchPosts();
   }, []);
 
-
-  React.useEffect(() => {
-    socket.current = io('https://socket-server-v9ni.onrender.com');
-  }, []);
-
-  React.useEffect(() => {
-    isAuthenticatedUser && socket.current?.emit('addUser', currentUser?._id);
-    socket.current?.on('getUsers', (users: any) => {
-      console.log(users.length)
-      console.log(
-        'users id array',
-        users,
-        users.map((user: any) => user.userId),
-      );
-      setIsOnlineUser(users.map((user: any) => user.userId));
-    });
-  }, [currentUser]);
 
 
   const checkIfOnline = (userId: any) => {

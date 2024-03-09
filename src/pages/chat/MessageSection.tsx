@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
+import { Socket } from 'socket.io-client';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -41,9 +42,15 @@ type MessageType = {
 }
 
 
+
 interface MessagePropsTypes {
     message: MessageType;
     own: boolean
+    setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>
+    socket: any
+    currentChat: any
+    editedMessage: string;
+    setEditedMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
 type SenderUser = {
@@ -52,11 +59,10 @@ type SenderUser = {
     avatarUrl: string;
 }
 
-const MessageSection: React.FC<MessagePropsTypes> = ({ message, own }) => {
+const MessageSection: React.FC<MessagePropsTypes> = ({ message, own, setMessages, socket, currentChat, editedMessage, setEditedMessage }) => {
     const [senderUser, setSenderUser] = React.useState<SenderUser | null>(null);
     const navigate = useNavigate()
     const { currentUser } = useSelector((state: any) => state.user)
-    const [editedMessage, setEditedMessage] = React.useState('')
 
     const handleWentToProfile = () => {
         if (currentUser._id === message.sender) {
@@ -72,7 +78,6 @@ const MessageSection: React.FC<MessagePropsTypes> = ({ message, own }) => {
             try {
                 const res = await axios.get(`/user/get/${message?.sender}`)
                 setSenderUser(res.data)
-                console.log(res.data)
             } catch (err) {
                 console.warn(err)
             }
@@ -83,11 +88,20 @@ const MessageSection: React.FC<MessagePropsTypes> = ({ message, own }) => {
     const formattedDate = format(message.createdAt, 'ru');
 
     const deleteMessage = async () => {
+        const receiverId = currentChat?.members.find(
+            (member: any) => member !== currentUser?._id
+        );
+
+        socket?.current.emit('deleteMessageInstagram', {
+            receiverId,
+            messageId: message?._id,
+        })
+
         try {
             const confirmAlert = window.confirm('Вы действительно хотите удалить ваше сообщение?')
             if (confirmAlert) {
-                const res = await axios.delete(`/chat/conversation/message/${message?._id}`)
-                return res.data
+                await axios.delete(`/chat/conversation/message/${message?._id}`)
+                setMessages((prev) => prev.filter((msg) => msg._id !== message._id));
             }
         } catch (err) {
             console.warn(err)
@@ -101,10 +115,25 @@ const MessageSection: React.FC<MessagePropsTypes> = ({ message, own }) => {
 
 
     const editMessage = async () => {
+        const receiverId = currentChat?.members.find(
+            (member: any) => member !== currentUser?._id
+        );
+
+        socket?.current.emit('editMessageInstagram', {
+            receiverId,
+            messageId: message?._id,
+            editedMessage
+        })
+
         try {
-            const res = await axios.patch(`/chat/conversation/message/${message?._id}`, { text: editedMessage })
+            await axios.patch(`/chat/conversation/message/${message?._id}`, { text: editedMessage })
             handleClose()
-            return res.data
+            setMessages((prev) =>
+                prev.map((msg) =>
+                    msg._id === message._id ? { ...msg, text: editedMessage } : msg
+                )
+            );
+            // handleRenderMessagesForEdit()
         } catch (err) {
             console.warn(err)
         }
