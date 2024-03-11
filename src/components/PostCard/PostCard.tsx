@@ -22,6 +22,8 @@ import { format, register } from 'timeago.js';
 import axios from '../../axios';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
+import { useMediaQuery } from '@mui/material'
+
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -123,6 +125,8 @@ const PostCard: React.FC<ITypes> = ({
   const [comment, setComment] = React.useState('');
   const { openFullPost } = useSelector((state: any) => state.openFullPost);
   const dispatch = useDispatch();
+  const isMobileScreen = useMediaQuery('(max-width:600px)');
+
 
   const navigate = useNavigate();
 
@@ -361,10 +365,10 @@ const PostCard: React.FC<ITypes> = ({
           </div>
           <div className="instagram-card-time">{formattedDate}</div>
         </div>
-        <div className="intagram-card-image">
+        <div className="instagram-card-image">
           <img
             onClick={handleOpenFullPostModal}
-            style={{ width: '600px', cursor: 'pointer' }}
+            style={{ width: isMobileScreen ? '100%' : '600px', cursor: 'pointer' }}
             src={imageUrl}
             height="600px"
             alt="Post"

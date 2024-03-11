@@ -10,6 +10,8 @@ import ErrorToLogin from '../components/ErrorToLogin';
 import axios from '.././axios';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
+import MobileHome from './MobileHome';
+import { useMediaQuery } from '@mui/material';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -68,6 +70,7 @@ interface PropsTypes {
 }
 
 const Home: React.FC<PropsTypes> = ({ isOnlineUser }) => {
+  const isMobileScreen = useMediaQuery('(max-width:600px)');
   const isAuthenticatedUser = useSelector(isAuthenticated);
   const [posts, setPosts] = React.useState<Post[]>([]);
   const [yourSubscribed, setYourSubscribed] = React.useState<UserTypeForResponese[]>([]);
@@ -105,60 +108,61 @@ const Home: React.FC<PropsTypes> = ({ isOnlineUser }) => {
 
   if (isAuthenticatedUser) {
     return (
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <div style={{ position: 'absolute' }}>
-            <RightPanel isOnlineUser={isOnlineUser} />
+      isMobileScreen ? <MobileHome yourSubscribed={yourSubscribed} posts={posts} checkIfOnline={checkIfOnline} /> :
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            {!isMobileScreen && <div style={{ position: 'absolute' }}>
+              <RightPanel isOnlineUser={isOnlineUser} />
+            </div>}
           </div>
-        </div>
-        <div className="main">
-          <div className="high-section">
-            <div className="accaunts">
-              {/* 9 avatars */}
-              {yourSubscribed.map((obj) => (
-                <Link key={obj._id} to={`/profile/${obj?._id}`}>
-                  {
-                    checkIfOnline(obj._id) ? <div><StyledBadge
-                      overlap="circular"
-                      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                      variant="dot"
-                    ><Avatar
+          <div className="main">
+            <div className="high-section">
+              <div className="accaunts">
+                {/* 9 avatars */}
+                {yourSubscribed.map((obj) => (
+                  <Link key={obj._id} to={`/profile/${obj?._id}`}>
+                    {
+                      checkIfOnline(obj._id) ? <div><StyledBadge
+                        overlap="circular"
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        variant="dot"
+                      ><Avatar
+                          sx={{ width: '56px', height: '56px', cursor: 'pointer' }}
+                          alt={obj?.userName}
+                          src={obj?.avatarUrl ? obj?.avatarUrl : '/broken-image.jpg'}
+                        />
+                      </StyledBadge></div> : <Avatar
                         sx={{ width: '56px', height: '56px', cursor: 'pointer' }}
                         alt={obj?.userName}
                         src={obj?.avatarUrl ? obj?.avatarUrl : '/broken-image.jpg'}
                       />
-                    </StyledBadge></div> : <Avatar
-                      sx={{ width: '56px', height: '56px', cursor: 'pointer' }}
-                      alt={obj?.userName}
-                      src={obj?.avatarUrl ? obj?.avatarUrl : '/broken-image.jpg'}
-                    />
-                  }
+                    }
 
-                </Link>
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <div className="posts-section">
+              {posts.map((obj: any) => (
+                <PostCard
+                  key={obj._id}
+                  alreadyOnline={checkIfOnline(obj.user._id)}
+                  id={obj._id}
+                  imageUrl={obj.imageUrl}
+                  desc={obj.desc}
+                  tags={obj.tags}
+                  likes={obj.likes}
+                  saves={obj.saves}
+                  viewers={obj.viewers}
+                  commentsPost={obj.comments}
+                  createdAt={obj.createdAt}
+                  user={obj.user}
+                  checkMark={obj.checkMark}
+                />
               ))}
             </div>
           </div>
-          <div className="posts-section">
-            {posts.map((obj: any) => (
-              <PostCard
-                key={obj._id}
-                alreadyOnline={checkIfOnline(obj.user._id)}
-                id={obj._id}
-                imageUrl={obj.imageUrl}
-                desc={obj.desc}
-                tags={obj.tags}
-                likes={obj.likes}
-                saves={obj.saves}
-                viewers={obj.viewers}
-                commentsPost={obj.comments}
-                createdAt={obj.createdAt}
-                user={obj.user}
-                checkMark={obj.checkMark}
-              />
-            ))}
-          </div>
         </div>
-      </div>
     );
   } else {
     return <ErrorToLogin />;

@@ -12,6 +12,11 @@
   .accaunts {
     display: flex;
     gap: 12px;
+
+    @media only screen and (max-width: 600px) {
+      width: 350px;
+      overflow: scroll;
+    }
   }
 
   .posts-section {
@@ -21,4 +26,14 @@
     flex-direction: column;
     padding: 56px;
   }
+
+  .posts-section-mobile {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-direction: column;
+    padding-top: 70px
+  }
+
+
 }

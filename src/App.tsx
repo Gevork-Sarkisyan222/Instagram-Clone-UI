@@ -19,6 +19,7 @@ import axios from './axios';
 import FullPost from './components/FullPost/FullPost';
 import Chat from './pages/chat/Chat';
 import { io, Socket } from 'socket.io-client';
+import { useMediaQuery } from '@mui/material'
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
   const dispatch = useDispatch();
   const [isOnlineUser, setIsOnlineUser] = React.useState<string[]>([]);
   const socket = React.useRef<Socket>();
+  const isMobileScreen = useMediaQuery('(max-width:600px)');
 
   const isLocation = location.pathname === '/login' || location.pathname === '/register';
 
@@ -54,7 +56,7 @@ function App() {
 
   return (
     <div className="App">
-      {!isLocation && isAuthenticatedUser && <DrawerLeft />}
+      {!isLocation && isAuthenticatedUser && !isMobileScreen && <DrawerLeft />}
       <Routes>
         <Route path="/" element={<Home isOnlineUser={isOnlineUser} />} />
         <Route path="/login" element={<Login />} />
