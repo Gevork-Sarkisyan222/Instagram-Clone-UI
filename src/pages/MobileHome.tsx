@@ -11,6 +11,7 @@ import axios from '.././axios';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import { UserTypeForResponese } from './Home';
+import TopMenu from './mobile/TopMenu';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -69,6 +70,7 @@ const MobileHome: React.FC<HomeMobileTypes> = ({ yourSubscribed, posts, checkIfO
     return (
         <div>
             <div className="main">
+                <TopMenu />
                 <div className="high-section">
                     <div className="accaunts">
                         {/* 9 avatars */}
