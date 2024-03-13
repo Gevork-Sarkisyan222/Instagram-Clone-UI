@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux';
 import { setOpenFullPost } from '../../redux/slices/openFullPost';
 import LikeIcon from '@mui/icons-material/Favorite';
 import CommentIcon from '@mui/icons-material/ModeComment';
+import { useMediaQuery } from '@mui/material'
+
 
 interface propsTypes {
   id: string;
@@ -13,6 +15,8 @@ interface propsTypes {
 
 const RandomCard: React.FC<propsTypes> = ({ id, imageUrl, likes, comments }) => {
   const dispatch = useDispatch();
+  const isMobileScreen = useMediaQuery('(max-width:600px)');
+
 
   const handleOpenFullPostModal = () => {
     dispatch(setOpenFullPost(id));

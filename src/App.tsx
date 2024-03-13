@@ -20,6 +20,7 @@ import FullPost from './components/FullPost/FullPost';
 import Chat from './pages/chat/Chat';
 import { io, Socket } from 'socket.io-client';
 import { useMediaQuery } from '@mui/material'
+import BottomMenu from './pages/mobile/BottomMenu';
 
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
         <Route path="/chat" element={<Chat socket={socket} isOnlineUser={isOnlineUser} setIsOnlineUser={setIsOnlineUser} />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      {isMobileScreen && isAuthenticatedUser && !isLocation && <BottomMenu />}
     </div>
   );
 }

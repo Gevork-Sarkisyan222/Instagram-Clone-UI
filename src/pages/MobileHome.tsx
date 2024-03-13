@@ -12,6 +12,7 @@ import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import { UserTypeForResponese } from './Home';
 import TopMenu from './mobile/TopMenu';
+import BottomMenu from './mobile/BottomMenu';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -117,6 +118,7 @@ const MobileHome: React.FC<HomeMobileTypes> = ({ yourSubscribed, posts, checkIfO
                     ))}
                 </div>
             </div>
+            <BottomMenu />
         </div>
     )
 }

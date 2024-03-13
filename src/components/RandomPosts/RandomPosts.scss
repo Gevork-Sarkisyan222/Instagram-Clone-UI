@@ -7,11 +7,23 @@
   padding-top: 23px;
   padding-left: 298px;
 
+  @media only screen and (max-width: 600px) {
+    padding: 0;
+    gap: 90px;
+    justify-content: center;
+  }
+
   .RandomCard-Container {
     width: 317px;
     height: 98px;
     cursor: pointer;
     position: relative;
+
+
+    @media only screen and (max-width: 600px) {
+      width: 100px;
+    }
+
 
     .hover-content {
       display: none;
@@ -26,6 +38,11 @@
       background-color: rgba(0, 0, 0, 0.5);
       background-size: 100%;
 
+      @media only screen and (max-width: 600px) {
+        width: 100%;
+        height: 159px;
+      }
+
       span {
         color: white;
       }
@@ -38,6 +55,12 @@
     img {
       width: 317px;
       height: 255px;
+
+
+      @media only screen and (max-width: 600px) {
+        width: 159px;
+        height: 159px;
+      }
 
       &:hover {
         filter: brightness(0.8);

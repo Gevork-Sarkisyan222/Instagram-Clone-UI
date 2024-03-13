@@ -12,6 +12,7 @@ import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import MobileHome from './MobileHome';
 import { useMediaQuery } from '@mui/material';
+import BottomMenu from './mobile/BottomMenu';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {

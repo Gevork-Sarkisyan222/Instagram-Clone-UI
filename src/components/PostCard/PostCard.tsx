@@ -367,7 +367,7 @@ const PostCard: React.FC<ITypes> = ({
         </div>
         <div className="instagram-card-image">
           <img
-            onClick={handleOpenFullPostModal}
+            onClick={!isMobileScreen ? handleOpenFullPostModal : undefined}
             style={{ width: isMobileScreen ? '100%' : '600px', cursor: 'pointer' }}
             src={imageUrl}
             height="600px"
@@ -384,7 +384,7 @@ const PostCard: React.FC<ITypes> = ({
             checked={liked}
           />
           <MessageIcon
-            onClick={handleOpenFullPostModal}
+            onClick={!isMobileScreen ? handleOpenFullPostModal : undefined}
             sx={{ marginTop: '9px', cursor: 'pointer', color: 'grey' }}
           />
           <div style={{ position: 'absolute', right: '25px' }}>
