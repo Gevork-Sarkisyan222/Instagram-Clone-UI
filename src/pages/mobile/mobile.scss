@@ -41,5 +41,17 @@
 .ExploreMobile-Main {
     text-align: center;
 
-    .posts-mobile-wrapper {}
+    .posts-mobile-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 3px;
+
+        .RandomPostsMobile {
+            img {
+                width: 141px;
+                height: 141px
+            }
+        }
+    }
 }

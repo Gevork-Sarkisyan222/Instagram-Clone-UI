@@ -10,41 +10,9 @@ import { getStorage, ref, uploadBytes, getDownloadURL, FirebaseStorage } from 'f
 import { TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import axios from '../../axios';
+import { useMediaQuery } from '@mui/material'
 
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 422,
-  height: 322,
-  borderRadius: '20px',
-  bgcolor: 'background.paper',
-  border: '2px solid #grey',
-  boxShadow: 24,
-  p: 4,
-  display: 'flex',
-  justifyContent: 'center',
-  flexDirection: 'column',
-  textAlign: 'center',
-};
 
-const continueStyle = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 422,
-  height: 322,
-  borderRadius: '20px',
-  bgcolor: 'background.paper',
-  border: '2px solid #grey',
-  boxShadow: 24,
-  p: 4,
-  display: 'flex',
-  justifyContent: 'center',
-  textAlign: 'center',
-};
 
 interface ModalProps {
   handleClosePostModal: () => void;
@@ -58,6 +26,45 @@ const PostModal: React.FC<ModalProps> = ({ handleClosePostModal }) => {
   const [imageUrl, setImageUrl] = React.useState<string>('');
   const [desc, setDesc] = React.useState<string>('');
   const [tags, setTags] = React.useState<string>('');
+  const isMobileScreen = useMediaQuery('(max-width:600px)');
+
+
+  const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: isMobileScreen ? '70%' : '422px',
+    height: 322,
+    borderRadius: '20px',
+    bgcolor: 'background.paper',
+    border: '2px solid #grey',
+    boxShadow: 24,
+    p: 4,
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    textAlign: 'center',
+  };
+
+  const continueStyle = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: isMobileScreen ? '75%' : '422px',
+    height: 322,
+    borderRadius: '20px',
+    bgcolor: 'background.paper',
+    border: '2px solid #grey',
+    boxShadow: 24,
+    p: 4,
+    display: 'flex',
+    justifyContent: 'center',
+    textAlign: 'center',
+  };
+
+  console.log(imageUrl)
 
   const uploadFile = (file: File | null) => {
     if (!file) return;
