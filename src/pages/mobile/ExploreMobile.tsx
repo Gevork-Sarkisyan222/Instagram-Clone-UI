@@ -36,6 +36,8 @@ const ExploreMobile: React.FC = () => {
                         imageUrl={obj.imageUrl}
                         likes={obj.likes}
                         comments={obj.comments}
+                        createdAt={obj.createdAt}
+                        user={obj.user}
                     />
                 ))}
             </div>

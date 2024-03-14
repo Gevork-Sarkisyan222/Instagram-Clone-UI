@@ -50,8 +50,22 @@
         .RandomPostsMobile {
             img {
                 width: 141px;
-                height: 141px
+                height: 141px;
+                cursor: pointer
             }
         }
+
     }
+
+}
+
+.postImage-for-modal {
+    width: 100%;
+    margin-top: 20px
+}
+
+.icons-for-modal {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }

@@ -103,6 +103,7 @@ const PostModal: React.FC<ModalProps> = ({ handleClosePostModal }) => {
     handleClosePostModal();
     const postData = { imageUrl, desc, tags };
     const res = await axios.post('/post/create', postData);
+    alert('Вы успешно создали пост!')
     return res.data;
   };
 
