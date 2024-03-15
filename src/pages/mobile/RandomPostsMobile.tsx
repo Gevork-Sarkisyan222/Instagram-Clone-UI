@@ -13,6 +13,9 @@ import axios from '../../axios'
 import { useSelector } from 'react-redux';
 import { format, register } from 'timeago.js';
 import { useNavigate } from 'react-router-dom';
+import LikedUsersItems from '../../components/PostCard/LikedUsersItems';
+import PostLikedUsersModal from '@mui/material/Modal';
+import { LikedUserTypes } from '../../components/PostCard/PostCard';
 
 
 const style = {
@@ -32,6 +35,7 @@ type UserType = {
     _id: string;
     userName: string;
     avatarUrl?: string
+    checkMark: boolean
 }
 
 interface propsTypes {
@@ -42,6 +46,22 @@ interface propsTypes {
     createdAt: string;
     user: UserType;
 }
+
+const styleForLikedUsersList = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '70%',
+    maxHeight: '400px',
+    bgcolor: 'background.paper',
+    border: '2px solid white',
+    borderRadius: '20px',
+    boxShadow: 24,
+    p: 4,
+    textAlign: 'center',
+    overflow: 'auto',
+};
 
 
 const RandomPostsMobile: React.FC<propsTypes> = ({ id, imageUrl, likes, comments, createdAt, user }) => {
@@ -115,6 +135,16 @@ const RandomPostsMobile: React.FC<propsTypes> = ({ id, imageUrl, likes, comments
 
     const navigate = useNavigate()
 
+    const [openLikesModal, setOpenLikesModal] = React.useState(false);
+
+    const handleOpenlikes = () => {
+        setOpenLikesModal(true);
+    };
+
+    const handleCloseLikes = () => {
+        setOpenLikesModal(false);
+    };
+
     const handleWentToProfile = () => {
         if (currentUser?._id === user?._id) {
             navigate('/profile')
@@ -123,8 +153,71 @@ const RandomPostsMobile: React.FC<propsTypes> = ({ id, imageUrl, likes, comments
         }
     }
 
+    const [likedUsers, setLikedUsers] = React.useState<LikedUserTypes[]>([]);
+
+    React.useEffect(() => {
+        const fetchLikedUser = async () => {
+            const res = await axios.get(`/post/liked/users/${id}`);
+            setLikedUsers(res.data);
+        };
+
+        fetchLikedUser();
+    }, []);
+
+    // find user
+    const [findUser, setFindUser] = React.useState('');
+
+    const filteredUsers = likedUsers.filter((user) =>
+        user.userName.toLowerCase().includes(findUser.toLowerCase()),
+    );
+
+
     return (
         <>
+            <PostLikedUsersModal
+                open={openLikesModal}
+                onClose={handleCloseLikes}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description">
+                <Box sx={styleForLikedUsersList}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        Все лайкнутые
+                    </Typography>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '21px' }}>
+                        <div className="group">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" className="icon">
+                                <g>
+                                    <path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path>
+                                </g>
+                            </svg>
+                            <input
+                                value={findUser}
+                                onChange={(e) => setFindUser(e.target.value)}
+                                className="input"
+                                type="search"
+                                placeholder="Поиск"
+                            />
+                        </div>
+                    </div>
+                    <div className="user-content">
+                        {filteredUsers.length === 0 ? (
+                            <div>
+                                <h2>Пусто</h2>
+                            </div>
+                        ) : (
+                            filteredUsers.map((obj) => (
+                                <LikedUsersItems
+                                    key={obj._id}
+                                    id={obj._id}
+                                    userName={obj.userName}
+                                    avatarUrl={obj.avatarUrl}
+                                    checkMark={obj.checkMark}
+                                />
+                            ))
+                        )}
+                    </div>
+                </Box>
+            </PostLikedUsersModal>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -137,6 +230,7 @@ const RandomPostsMobile: React.FC<propsTypes> = ({ id, imageUrl, likes, comments
                         <Typography onClick={handleWentToProfile} id="modal-modal-title" variant="h6" component="h2">
                             {user?.userName}
                         </Typography>
+                        {user?.checkMark && <svg aria-label="Подтвержденный" className="x1lliihq x1n2onr6" fill="rgb(0, 149, 246)" height="12" role="img" viewBox="0 0 40 40" width="12"><title>Подтвержденный</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>}
                     </div>
                     <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
                         <img className='postImage-for-modal' src={imageUrl} alt={`post with id > ${id}`} />
@@ -160,7 +254,7 @@ const RandomPostsMobile: React.FC<propsTypes> = ({ id, imageUrl, likes, comments
                         </div>
                     </article>
                     <div>
-                        <h4>{likes.length} отметок "Нравиться"</h4>
+                        <h4 style={{ cursor: 'pointer' }} onClick={handleOpenlikes}>{likes.length} отметок "Нравиться"</h4>
                         <p style={{ color: 'grey' }}>{formattedDate}</p>
                     </div>
                 </Box>

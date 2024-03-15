@@ -93,10 +93,11 @@ interface ITypes {
   checkMark: boolean;
 }
 
-interface LikedUserTypes {
+export interface LikedUserTypes {
   _id: string;
   userName: string;
   avatarUrl: string;
+  checkMark: boolean;
 }
 
 interface CommentTypes {
@@ -321,6 +322,7 @@ const PostCard: React.FC<ITypes> = ({
                   id={obj._id}
                   userName={obj.userName}
                   avatarUrl={obj.avatarUrl}
+                  checkMark={obj.checkMark}
                 />
               ))
             )}

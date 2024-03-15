@@ -267,6 +267,7 @@ const PostInfoBox: React.FC<idType> = ({ id }) => {
                   id={obj._id}
                   userName={obj.userName}
                   avatarUrl={obj.avatarUrl}
+                  checkMark={obj.checkMark}
                 />
               ))
             )}

@@ -17,6 +17,11 @@ import { isAuthenticated } from '../../redux/slices/user.slice';
 import { useSelector } from 'react-redux';
 import ErrorToLogin from '../../components/ErrorToLogin';
 import axios from '../../axios';
+import { useMediaQuery } from '@mui/material'
+import MobileProfile from '../mobile/ProfilesMobile/MobileProfile';
+
+
+
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -68,6 +73,7 @@ const profileStyles = {
 
 function Profile() {
   const { currentUser } = useSelector((state: any) => state.user);
+  const isMobileScreen = useMediaQuery('(max-width:600px)');
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -125,7 +131,7 @@ function Profile() {
   );
 
   if (isAuthenticatedUser) {
-    return (
+    return isMobileScreen ? <MobileProfile /> : (
       <>
         <EditProfileModal
           open={openEditProfile}

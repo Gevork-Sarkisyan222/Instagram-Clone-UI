@@ -1,0 +1,42 @@
+.MobileProfile-Container {
+    .first-userName {
+        text-align: center;
+        font-size: 21px;
+    }
+
+    .Top-Line {
+        width: 100%;
+        height: 1px;
+        position: absolute;
+        top: 52px;
+        background-color: rgb(217, 217, 217);
+    }
+
+    .info-content {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        padding-left: 20px;
+        padding-top: 20px;
+
+        .content {
+            display: flex;
+            flex-direction: column;
+
+            h2 {
+                font-weight: 400;
+                font-size: 21px;
+            }
+        }
+
+
+    }
+
+    .items {
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        margin-top: 43px;
+        gap: 20px;
+    }
+}

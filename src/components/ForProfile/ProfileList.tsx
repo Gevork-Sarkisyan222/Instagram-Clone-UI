@@ -40,7 +40,7 @@ interface CreatedPostType {
   tags: string;
 }
 
-function MarkerList() {
+function ProfileList() {
   const { currentUser } = useSelector((state: any) => state.user);
   const [type, setType] = React.useState<string | undefined>('posts');
 
@@ -237,4 +237,4 @@ function MarkerList() {
   );
 }
 
-export default MarkerList;
+export default ProfileList;
