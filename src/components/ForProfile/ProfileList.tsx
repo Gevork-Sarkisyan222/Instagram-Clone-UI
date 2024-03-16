@@ -23,7 +23,7 @@ type User = {
   checkMark: boolean
 };
 
-interface ArraysTypes {
+export interface ArraysTypes {
   _id: string;
   user: User;
   desc: string;
@@ -31,7 +31,7 @@ interface ArraysTypes {
   createdAt: string;
 }
 
-interface CreatedPostType {
+export interface CreatedPostType {
   id: string;
   imageUrl: string;
   likes: string[];

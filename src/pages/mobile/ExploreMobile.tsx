@@ -8,7 +8,8 @@ interface PostType {
     id: string;
     imageUrl: string;
     likes: string[];
-    comments: string[];
+    desc: string;
+    tags: string
 }
 
 
@@ -35,7 +36,8 @@ const ExploreMobile: React.FC = () => {
                         id={obj._id}
                         imageUrl={obj.imageUrl}
                         likes={obj.likes}
-                        comments={obj.comments}
+                        desc={obj.desc}
+                        tags={obj.tags}
                         createdAt={obj.createdAt}
                         user={obj.user}
                     />

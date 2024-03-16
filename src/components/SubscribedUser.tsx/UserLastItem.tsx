@@ -55,7 +55,7 @@ const UserLastItem: React.FC<IProps> = ({ id, userName, avatarUrl }) => {
         <Link to="/profile/342">
           <Avatar
             sx={{ width: '44px', height: '44px', cursor: 'pointer' }}
-            alt="Travis Howard"
+            alt={userName}
             src={avatarUrl ? avatarUrl : '/broken-image.jpg'}
           />
         </Link>

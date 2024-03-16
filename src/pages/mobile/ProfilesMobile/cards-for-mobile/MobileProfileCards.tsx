@@ -9,16 +9,17 @@ import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from '@mui/icons-material/Favorite';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import axios from '../../axios'
+import axios from '../../../../axios'
 import { useSelector } from 'react-redux';
 import { format, register } from 'timeago.js';
 import { useNavigate } from 'react-router-dom';
-import LikedUsersItems from '../../components/PostCard/LikedUsersItems';
+import LikedUsersItems from '../../../../components/PostCard/LikedUsersItems';
 import PostLikedUsersModal from '@mui/material/Modal';
-import { LikedUserTypes } from '../../components/PostCard/PostCard';
-import EditPost from '../../components/ForProfile/EditPost';
+import { LikedUserTypes } from '../../../../components/PostCard/PostCard';
+import './cards-for-mobile.scss';
 import EditIcon from '@mui/icons-material/Edit';
 import EditModal from '@mui/material/Modal';
+import EditPost from '../../../../components/ForProfile/EditPost';
 
 
 const style = {
@@ -68,7 +69,7 @@ const styleForLikedUsersList = {
 };
 
 
-const RandomPostsMobile: React.FC<propsTypes> = ({ id, imageUrl, likes, desc, tags, createdAt, user }) => {
+const MobileProfileCards: React.FC<propsTypes> = ({ id, imageUrl, likes, desc, tags, createdAt, user }) => {
     const { currentUser } = useSelector((state: any) => state.user)
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -185,7 +186,6 @@ const RandomPostsMobile: React.FC<propsTypes> = ({ id, imageUrl, likes, desc, ta
         setOpenEditModal(false)
     }
 
-
     return (
         <>
             <EditModal
@@ -281,11 +281,11 @@ const RandomPostsMobile: React.FC<propsTypes> = ({ id, imageUrl, likes, desc, ta
                     </div>
                 </Box>
             </Modal >
-            <div className='RandomPostsMobile'>
+            <div className='MobileProfileCards'>
                 <img onClick={handleOpen} src={imageUrl} alt={`post with id > ${id}`} />
             </div>
         </>
     )
 }
 
-export default RandomPostsMobile
+export default MobileProfileCards
