@@ -34,5 +34,11 @@
 
   h2 {
     margin-left: 76px;
+
+    @media only screen and (max-width: 600px) {
+      text-align: center;
+      margin-left: 0;
+    }
+
   }
 }

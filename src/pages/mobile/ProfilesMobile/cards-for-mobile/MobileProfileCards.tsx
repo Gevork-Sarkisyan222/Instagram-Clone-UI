@@ -193,7 +193,7 @@ const MobileProfileCards: React.FC<propsTypes> = ({ id, imageUrl, likes, desc, t
                 onClose={handleCloseEditModal}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description">
-                <EditPost id={id} imageUrl={imageUrl} desc={desc} tags={tags} handleClose={handleClose} />
+                <EditPost id={id} imageUrl={imageUrl} desc={desc} tags={tags} handleClose={handleClose} handleCloseEditModal={handleCloseEditModal} />
             </EditModal>
             <PostLikedUsersModal
                 open={openLikesModal}

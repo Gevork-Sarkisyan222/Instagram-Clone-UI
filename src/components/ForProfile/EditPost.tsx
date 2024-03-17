@@ -2,24 +2,11 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { TextField } from '@mui/material';
+import { TextField, useMediaQuery } from '@mui/material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { getStorage, ref, uploadBytes, getDownloadURL, FirebaseStorage } from 'firebase/storage';
 import app from '../../firebase';
 import axios from '../../axios';
-
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 585,
-  height: 400,
-  borderRadius: '22px',
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-};
 
 interface PostTypes {
   id: string;
@@ -27,9 +14,10 @@ interface PostTypes {
   desc: string;
   tags: string;
   handleClose: () => void;
+  handleCloseEditModal?: () => void
 }
 
-const EditPost: React.FC<PostTypes> = ({ id, imageUrl, desc, tags, handleClose }) => {
+const EditPost: React.FC<PostTypes> = ({ id, imageUrl, desc, tags, handleClose, handleCloseEditModal }) => {
   // edit poles
   const [imageUrlEdit, setImageUrlEdit] = React.useState<string>('');
   const [descEdit, setDescEdit] = React.useState<string>('');
@@ -68,6 +56,9 @@ const EditPost: React.FC<PostTypes> = ({ id, imageUrl, desc, tags, handleClose }
 
   const editPost = async () => {
     handleClose();
+    if (handleCloseEditModal) {
+      handleCloseEditModal();
+    }
 
     const requestData: any = {};
     if (imageUrlEdit) requestData.imageUrl = imageUrlEdit;
@@ -82,7 +73,83 @@ const EditPost: React.FC<PostTypes> = ({ id, imageUrl, desc, tags, handleClose }
     return res.data;
   };
 
-  return (
+  const isMobileScreen = useMediaQuery('(max-width:600px)');
+
+  const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 585,
+    height: 400,
+    borderRadius: '22px',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+  };
+
+
+  const mobileStyle = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '55%',
+    height: 520,
+    borderRadius: '22px',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+  };
+
+
+
+
+  return isMobileScreen ? <Box sx={mobileStyle}>
+    <Typography id="modal-modal-title" variant="h6" component="h2">
+      Редактирование поста
+    </Typography>
+    <AddPhotoAlternateIcon
+      onClick={() => fileRef.current?.click()}
+      sx={{ color: 'blue', position: 'absolute', fontSize: '3.5rem', cursor: 'pointer' }}
+    />
+    <input ref={fileRef} type="file" onChange={handleChange} hidden />
+    <img style={{ width: '200px', height: '200px', marginTop: '18px' }} src={imageUrlEdit ? imageUrlEdit : imageUrl} alt="edit post image" />
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <TextField
+        sx={{ marginTop: '4px' }}
+        id="standard-basic"
+        variant="standard"
+        multiline
+        onChange={(e) => setDescEdit(e.target.value)}
+        rows={4}
+        defaultValue={desc}
+        placeholder="Добавьте подпись"
+        InputProps={{
+          disableUnderline: true,
+        }}
+      />
+      <TextField
+        sx={{ marginTop: '4px' }}
+        id="standard-basic"
+        variant="standard"
+        multiline
+        onChange={(e) => setTagsEdit(e.target.value)}
+        rows={4}
+        defaultValue={tags}
+        placeholder="Добавьте хеш-теги"
+        InputProps={{
+          disableUnderline: true,
+        }}
+      />
+      <Button
+        onClick={editPost}
+        variant="contained"
+        sx={{ height: '40px' }}>
+        Сохранить изменения
+      </Button>
+    </div>
+  </Box> : (
     <Box sx={style}>
       <div style={{ textAlign: 'center' }}>
         <Typography id="modal-modal-title" variant="h6" component="h2">

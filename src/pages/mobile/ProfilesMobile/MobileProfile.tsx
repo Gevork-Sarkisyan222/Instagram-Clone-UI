@@ -19,8 +19,10 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { ArraysTypes } from '../../../components/ForProfile/ProfileList';
 import MobileProfileCards from './cards-for-mobile/MobileProfileCards';
-// import EditProfileModal from '@mui/material/Modal';
-// import EditProfile from '../../components/EdtiProfile/EditProfile';
+import CreatePostModal from '@mui/material/Modal';
+import EditProfileModal from '@mui/material/Modal';
+import PostModal from '../../../components/PostModal/PostModal';
+import EditProfile from '../../../components/EdtiProfile/EditProfile';
 
 
 const style = {
@@ -63,7 +65,7 @@ type UserType = {
 }
 
 
-export interface CreatedPostType {
+export interface CardTypes {
     _id: string;
     imageUrl: string;
     likes: string[];
@@ -72,6 +74,21 @@ export interface CreatedPostType {
     createdAt: string;
     user: UserType;
 }
+
+const profileStyles = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '70%',
+    height: 500,
+    maxHeight: '100vh',
+    bgcolor: 'background.paper',
+    borderRadius: '22px',
+    boxShadow: 24,
+    p: 4,
+    overflow: 'auto',
+};
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -137,7 +154,7 @@ function MobileProfile() {
     // down
 
     // created posts
-    const [createdPosts, setCreatedPosts] = React.useState<CreatedPostType[]>([]);
+    const [createdPosts, setCreatedPosts] = React.useState<CardTypes[]>([]);
     console.log('created Posts', createdPosts);
 
     React.useEffect(() => {
@@ -148,8 +165,8 @@ function MobileProfile() {
         fetchCreatedPosts();
     });
 
-    const [likedPosts, setLikedPosts] = React.useState<ArraysTypes[]>([]);
-    const [savedPosts, setSavedPosts] = React.useState<ArraysTypes[]>([]);
+    const [likedPosts, setLikedPosts] = React.useState<CardTypes[]>([]);
+    const [savedPosts, setSavedPosts] = React.useState<CardTypes[]>([]);
 
     React.useEffect(() => {
         const fetchLikedPosts = async () => {
@@ -169,9 +186,37 @@ function MobileProfile() {
 
     console.log('saved posts', savedPosts)
 
+    // for create post modal
+    const [openPostModal, setOpenPostModal] = React.useState(false);
+    const handleOpenPostModal = () => setOpenPostModal(true);
+    const handleClosePostModal = () => setOpenPostModal(false);
+
+    // edit profile settings 
+    const [openEditProfile, setOpenEditProfile] = React.useState(false);
+    const handleOpenEditProfile = () => setOpenEditProfile(true);
+    const handleCloseEditProfile = () => setOpenEditProfile(false);
+
 
     return (
         <>
+            {/* edit profile */}
+            <EditProfileModal
+                open={openEditProfile}
+                onClose={handleCloseEditProfile}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description">
+                <Box sx={profileStyles}>
+                    <EditProfile />
+                </Box>
+            </EditProfileModal>
+            {/* create post modal */}
+            <CreatePostModal
+                open={openPostModal}
+                onClose={handleClosePostModal}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description">
+                <PostModal handleClosePostModal={handleClosePostModal} />
+            </CreatePostModal>
             {/* subscribers and subsrcibed modals */}
             <SubscribersModal
                 open={open}
@@ -281,7 +326,7 @@ function MobileProfile() {
                     <div className="content">
                         <h2>{currentUser?.userName}</h2>
                         <Button
-                            // onClick={handleOpenEditProfile}
+                            onClick={handleOpenEditProfile}
                             sx={{
                                 width: '192px',
                                 height: '32px',
@@ -299,9 +344,9 @@ function MobileProfile() {
                 </div>
                 <div className='items'>
                     <div className="items-first-line"></div>
-                    <span>{currentUser?.createdPosts.length} <span style={{ color: 'grey', display: 'flex' }}>публикаций</span></span>
-                    <span onClick={handleOpen}>{currentUser?.subscribers.length} <span style={{ color: 'grey', display: 'flex' }}>подписчика</span></span>
-                    <span onClick={handleOpenLast}>{currentUser?.subscribed.length} <span style={{ color: 'grey', display: 'flex' }}>подписок</span></span>
+                    <span style={{ cursor: 'pointer' }} onClick={() => setSelectedType('posts')}>{currentUser?.createdPosts.length} <span style={{ color: 'grey', display: 'flex' }}>публикаций</span></span>
+                    <span style={{ cursor: 'pointer' }} onClick={handleOpen}>{currentUser?.subscribers.length} <span style={{ color: 'grey', display: 'flex' }}>подписчика</span></span>
+                    <span style={{ cursor: 'pointer' }} onClick={handleOpenLast}>{currentUser?.subscribed.length} <span style={{ color: 'grey', display: 'flex' }}>подписок</span></span>
                     <div className="items-last-line"></div>
                 </div>
                 <div className="profile-icons">
@@ -338,17 +383,18 @@ function MobileProfile() {
                                 textAlign: 'center',
                                 marginTop: '15px'
                             }}>
-                            <h1 className="share-text">Поделиться фото</h1>
+                            <h1 className="share-text" >Поделиться фото</h1>
                             <p style={{ fontSize: '20px' }}>Фото, которыми вы делитесь, будут показываться в вашем профиле.</p>
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
                                 <ButtonText
+                                    onClick={handleOpenPostModal}
                                     variant="text"
                                     sx={{ width: '275px' }}>
                                     <span>Поделись своим первым фото</span>
                                 </ButtonText>
                             </div>
                         </div> : <div className='Mobile-Cards-Container'>
-                            {createdPosts.map((post: CreatedPostType) => (
+                            {createdPosts.map((post: CardTypes) => (
                                 <MobileProfileCards key={post._id} id={post._id} imageUrl={post.imageUrl} likes={post.likes} desc={post.desc} createdAt={post.createdAt} tags={post.tags} user={post.user} />
                             ))}
                         </div>
@@ -366,16 +412,10 @@ function MobileProfile() {
                             <div>
                                 <h1>Лайкнутые посты</h1>
                                 <p>Вот ваша подборка</p>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            gap: '67px',
-                                            flexWrap: 'wrap',
-                                            justifyContent: 'center',
-                                        }}>
-
-                                    </div>
+                                <div className='Mobile-Cards-Container'>
+                                    {likedPosts.length === 0 ? <div><h2>Пусто</h2></div> : likedPosts.map((post: CardTypes) => (
+                                        <MobileProfileCards key={post._id} id={post._id} imageUrl={post.imageUrl} likes={post.likes} desc={post.desc} createdAt={post.createdAt} tags={post.tags} user={post.user} />
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -393,7 +433,10 @@ function MobileProfile() {
                             <div>
                                 <h1>Сохраненные посты</h1>
                                 <p>Вот ваша подборка</p>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                <div className='Mobile-Cards-Container'>
+                                    {savedPosts.length === 0 ? <div><h2>Пусто</h2></div> : savedPosts.map((post: CardTypes) => (
+                                        <MobileProfileCards key={post._id} id={post._id} imageUrl={post.imageUrl} likes={post.likes} desc={post.desc} createdAt={post.createdAt} tags={post.tags} user={post.user} />
+                                    ))}
                                 </div>
                             </div>
                         </div>

@@ -202,7 +202,7 @@ const PostModal: React.FC<ModalProps> = ({ handleClosePostModal }) => {
                 <Button
                   onClick={() => fileRef.current?.click()}
                   sx={{ backgroundColor: '#0095f6' }}>
-                  <span style={{ fontWeight: '500' }}>Выбрать на компьютере</span>
+                  <span style={{ fontWeight: '500' }}>Выбрать на {isMobileScreen ? 'телефоне' : 'компьютере'}</span>
                 </Button>
               ) : (
                 <Button onClick={handleStartContinue} sx={{ backgroundColor: '#0095f6' }}>
