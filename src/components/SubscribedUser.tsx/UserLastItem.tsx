@@ -52,7 +52,7 @@ const UserLastItem: React.FC<IProps> = ({ id, userName, avatarUrl }) => {
   return (
     <>
       <div style={{ justifyContent: 'center' }} className="item">
-        <Link to="/profile/342">
+        <Link to={`/profile/${id}`}>
           <Avatar
             sx={{ width: '44px', height: '44px', cursor: 'pointer' }}
             alt={userName}
