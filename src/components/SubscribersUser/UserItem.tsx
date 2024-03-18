@@ -79,7 +79,7 @@ const UserItem: React.FC<IProps> = ({ id, userName, avatarUrl }) => {
         <span style={{ cursor: 'pointer' }} onClick={handleWentToProfile}>
           {userName}
         </span>
-        {subscribe ? (
+        {currentUser?._id === id ? '' : subscribe ? (
           <MuiButton variant="text" onClick={unSubscibe}>
             <span style={{ fontSize: '13px' }}>Отписаться</span>
           </MuiButton>
@@ -88,7 +88,7 @@ const UserItem: React.FC<IProps> = ({ id, userName, avatarUrl }) => {
             <span style={{ fontSize: '13px' }}>Подписаться</span>
           </MuiButton>
         )}
-        {!deletedUserContent && (
+        {currentUser?._id === id ? '' : !deletedUserContent && (
           <Button
             onClick={removeSubscribedUser}
             sx={{

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
 import { Avatar, Button } from '@mui/material';
-import './mobileProfile.scss'
+import './ProfilesMobile/mobileProfile.scss'
 import Checkbox from '@mui/material/Checkbox';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -10,19 +10,52 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import GridViewIcon from '@mui/icons-material/GridView';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ButtonText from '@mui/material/Button';
-import axios from '../../../axios';
+import axios from '../../axios';
 import SubscribersModal from '@mui/material/Modal';
 import SubscribedModal from '@mui/material/Modal';
-import UserItem from '../../../components/SubscribersUser/UserItem';
-import UserLastItem from '../../../components/SubscribedUser.tsx/UserLastItem';
+import UserItem from '../../components/SubscribersUser/UserItem';
+import UserLastItem from '../../components/SubscribedUser.tsx/UserLastItem';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { ArraysTypes } from '../../../components/ForProfile/ProfileList';
-import MobileProfileCards from './cards-for-mobile/MobileProfileCards';
-import CreatePostModal from '@mui/material/Modal';
-import EditProfileModal from '@mui/material/Modal';
-import PostModal from '../../../components/PostModal/PostModal';
-import EditProfile from '../../../components/EdtiProfile/EditProfile';
+import { ArraysTypes } from '../../components/ForProfile/ProfileList';
+import MobileProfileCards from './ProfilesMobile/cards-for-mobile/MobileProfileCards';
+import PostModal from '../../components/PostModal/PostModal';
+import { useNavigate } from 'react-router-dom';
+import Badge from '@mui/material/Badge';
+import { styled } from '@mui/material/styles';
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+    '& .MuiBadge-badge': {
+        backgroundColor: '#44b700',
+        color: '#44b700',
+        boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+        width: '14px',
+        height: '14px',
+        borderRadius: '20px',
+
+        '&::after': {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
+            animation: 'ripple 1.2s infinite ease-in-out',
+            border: '1px solid currentColor',
+            content: '""',
+        },
+    },
+    '@keyframes ripple': {
+        '0%': {
+            transform: 'scale(.8)',
+            opacity: 1,
+        },
+        '100%': {
+            transform: 'scale(2.4)',
+            opacity: 0,
+        },
+    },
+}));
 
 
 const style = {
@@ -60,7 +93,7 @@ const styleForLastText = {
 type UserType = {
     _id: string;
     userName: string;
-    avatarUrl?: string
+    avatarUrl?: string;
     checkMark: boolean
 }
 
@@ -93,7 +126,13 @@ const profileStyles = {
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
-function MobileProfile() {
+
+interface propsTypes {
+    userData: any
+    isOnlineUser: string[]
+}
+
+const MobileAnotherProfile: React.FC<propsTypes> = ({ userData, isOnlineUser }) => {
     const { currentUser } = useSelector((state: any) => state.user)
     const [selectedType, setSelectedType] = React.useState<string>('posts');
 
@@ -105,29 +144,29 @@ function MobileProfile() {
     const [subscribersList, setSubscribersList] = React.useState([]);
     const [subscribedList, setSubscribedList] = React.useState([]);
 
-    console.log(currentUser?._id);
+    console.log(userData?._id);
 
     React.useEffect(() => {
         const fetchSubscribers = async () => {
-            if (currentUser?._id) {
-                const res = await axios.get(`user/subscribers/list/${currentUser._id}`);
+            if (userData?._id) {
+                const res = await axios.get(`user/subscribers/list/${userData?._id}`);
                 setSubscribersList(res.data);
             }
         };
 
         fetchSubscribers();
-    }, [currentUser]);
+    }, [userData]);
 
     React.useEffect(() => {
         const fetchSubscribed = async () => {
-            if (currentUser?._id) {
-                const res = await axios.get(`user/subscribed/list/${currentUser._id}`);
+            if (userData?._id) {
+                const res = await axios.get(`user/subscribed/list/${userData?._id}`);
                 setSubscribedList(res.data);
             }
         };
 
         fetchSubscribed();
-    }, [currentUser]);
+    }, [userData]);
 
     // search inputs
     const [searchSubscribers, setSearchSubscribers] = React.useState('');
@@ -150,8 +189,6 @@ function MobileProfile() {
     const handleCloseLast = () => setOpenLast(false);
 
 
-    // selected types 
-    // down
 
     // created posts
     const [createdPosts, setCreatedPosts] = React.useState<CardTypes[]>([]);
@@ -159,64 +196,54 @@ function MobileProfile() {
 
     React.useEffect(() => {
         const fetchCreatedPosts = async () => {
-            const res = await axios.get(`/post/get/users/created/posts/${currentUser._id}`);
+            const res = await axios.get(`/post/get/users/created/posts/${userData?._id}`);
             setCreatedPosts(res.data);
         };
         fetchCreatedPosts();
-    });
-
-    const [likedPosts, setLikedPosts] = React.useState<CardTypes[]>([]);
-    const [savedPosts, setSavedPosts] = React.useState<CardTypes[]>([]);
-
-    React.useEffect(() => {
-        const fetchLikedPosts = async () => {
-            const res = await axios.get(`/post/get/users/liked/posts/${currentUser._id}`);
-            setLikedPosts(res.data);
-        };
-        fetchLikedPosts();
     }, []);
 
+    const [subscribe, setSubscribe] = React.useState(false);
+
     React.useEffect(() => {
-        const fetchSavedPosts = async () => {
-            const res = await axios.get(`/post/get/users/saved/posts/${currentUser._id}`);
-            setSavedPosts(res.data);
-        };
-        fetchSavedPosts();
+        if (currentUser?.subscribed.includes(userData?._id)) {
+            setSubscribe(true);
+        }
     }, []);
 
-    console.log('saved posts', savedPosts)
+    const subscibeUser = async () => {
+        const { data } = await axios.post(`/user/subscribe/${userData?._id}`)
+        setSubscribe(true)
+        return data
+    }
 
-    // for create post modal
-    const [openPostModal, setOpenPostModal] = React.useState(false);
-    const handleOpenPostModal = () => setOpenPostModal(true);
-    const handleClosePostModal = () => setOpenPostModal(false);
+    const unSubscibeUser = async () => {
+        const { data } = await axios.post(`/user/unsubscribe/${userData?._id}`)
+        setSubscribe(false)
+        return data
+    }
 
-    // edit profile settings 
-    const [openEditProfile, setOpenEditProfile] = React.useState(false);
-    const handleOpenEditProfile = () => setOpenEditProfile(true);
-    const handleCloseEditProfile = () => setOpenEditProfile(false);
+    const navigate = useNavigate()
+
+    const createConversation = async () => {
+        try {
+            const res = await axios.post('/chat/conversation', { senderId: currentUser?._id, reciverId: userData?._id });
+            navigate('/chat')
+            return res.data
+        } catch (err) {
+            console.warn(err)
+            navigate('/chat')
+        }
+    }
+
+    const checkIfOnline = (userId: string) => {
+        return isOnlineUser.includes(userId);
+    };
+
+    const alreadyOnline = checkIfOnline(userData?._id);
 
 
     return (
         <>
-            {/* edit profile */}
-            <EditProfileModal
-                open={openEditProfile}
-                onClose={handleCloseEditProfile}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description">
-                <Box sx={profileStyles}>
-                    <EditProfile />
-                </Box>
-            </EditProfileModal>
-            {/* create post modal */}
-            <CreatePostModal
-                open={openPostModal}
-                onClose={handleClosePostModal}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description">
-                <PostModal handleClosePostModal={handleClosePostModal} />
-            </CreatePostModal>
             {/* subscribers and subsrcibed modals */}
             <SubscribersModal
                 open={open}
@@ -315,41 +342,81 @@ function MobileProfile() {
             </SubscribedModal>
             {/* ===================== */}
             <div className='MobileProfile-Container'>
-                <h2 className='first-userName'>{currentUser?.userName}</h2>
+                <h2 className='first-userName'>{userData?.userName}</h2>
                 <div className='Top-Line'></div>
                 <div className='info-content'>
-                    <Avatar
-                        alt={currentUser?.userName}
-                        src={currentUser?.avatarUrl}
-                        sx={{ width: 77, height: 77 }}
-                    />
+
+                    {alreadyOnline ? <StyledBadge
+                        overlap="circular"
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        variant="dot">
+                        <Avatar
+                            alt={userData?.userName}
+                            src={userData?.avatarUrl}
+                            sx={{ width: 77, height: 77 }}
+                        />
+                    </StyledBadge>
+                        : <Avatar
+                            alt={userData?.userName}
+                            src={userData?.avatarUrl}
+                            sx={{ width: 77, height: 77 }}
+                        />}
                     <div className="content">
                         <div style={{ display: 'flex', gap: '7px', alignItems: 'center' }}>
-                            <h2>{currentUser?.userName}</h2>
-                            {currentUser.checkMark && <svg aria-label="Подтвержденный" className="x1lliihq x1n2onr6" fill="rgb(0, 149, 246)" height="18" role="img" viewBox="0 0 40 40" width="18"><title>Подтвержденный</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>}
+                            <h2>{userData?.userName}</h2>
+                            {userData.checkMark && <svg aria-label="Подтвержденный" className="x1lliihq x1n2onr6" fill="rgb(0, 149, 246)" height="18" role="img" viewBox="0 0 40 40" width="18"><title>Подтвержденный</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>}
                         </div>
-                        <Button
-                            onClick={handleOpenEditProfile}
-                            sx={{
-                                width: '192px',
-                                height: '32px',
-                                backgroundColor: '#e7e7e7',
-                                '&:hover': {
-                                    backgroundColor: '#c4c4c4',
-                                },
-                            }}>
-                            <span style={{ fontSize: '11px', color: '#00001d' }}>Редактировать профиль</span>
-                        </Button>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                            {
+                                subscribe ?
+                                    <Button
+                                        onClick={unSubscibeUser}
+                                        sx={{
+                                            width: '192px',
+                                            height: '32px',
+                                            backgroundColor: '#0095f6',
+                                            '&:hover': {
+                                                backgroundColor: '#0095f6',
+                                            },
+                                        }}>
+                                        <span style={{ fontSize: '13px', color: 'white' }}>Отписаться</span>
+                                    </Button>
+                                    : <Button
+                                        onClick={subscibeUser}
+                                        sx={{
+                                            width: '192px',
+                                            height: '32px',
+                                            backgroundColor: '#0095f6',
+                                            '&:hover': {
+                                                backgroundColor: '#0095f6',
+                                            },
+                                        }}>
+                                        <span style={{ fontSize: '13px', color: 'white' }}>Подписаться</span>
+                                    </Button>
+                            }
+                            <Button
+                                onClick={createConversation}
+                                sx={{
+                                    width: '192px',
+                                    height: '32px',
+                                    backgroundColor: '#0095f6',
+                                    '&:hover': {
+                                        backgroundColor: '#0095f6',
+                                    },
+                                }}>
+                                <span style={{ fontSize: '13px', color: 'white' }}>Написать</span>
+                            </Button>
+                        </div>
                     </div>
                 </div>
                 <div style={{ padding: '14px' }}>
-                    <p>{currentUser.desc && currentUser?.desc}</p>
+                    <p>{userData?.desc}</p>
                 </div>
                 <div className='items'>
                     <div className="items-first-line"></div>
-                    <span style={{ cursor: 'pointer' }} onClick={() => setSelectedType('posts')}>{currentUser?.createdPosts.length} <span style={{ color: 'grey', display: 'flex' }}>публикаций</span></span>
-                    <span style={{ cursor: 'pointer' }} onClick={handleOpen}>{currentUser?.subscribers.length} <span style={{ color: 'grey', display: 'flex' }}>подписчика</span></span>
-                    <span style={{ cursor: 'pointer' }} onClick={handleOpenLast}>{currentUser?.subscribed.length} <span style={{ color: 'grey', display: 'flex' }}>подписок</span></span>
+                    <span style={{ cursor: 'pointer' }} onClick={() => setSelectedType('posts')}>{userData?.createdPosts.length} <span style={{ color: 'grey', display: 'flex' }}>публикаций</span></span>
+                    <span style={{ cursor: 'pointer' }} onClick={handleOpen}>{userData?.subscribers.length} <span style={{ color: 'grey', display: 'flex' }}>подписчика</span></span>
+                    <span style={{ cursor: 'pointer' }} onClick={handleOpenLast}>{userData?.subscribed.length} <span style={{ color: 'grey', display: 'flex' }}>подписок</span></span>
                     <div className="items-last-line"></div>
                 </div>
                 <div className="profile-icons">
@@ -360,20 +427,6 @@ function MobileProfile() {
                         icon={<GridViewIcon />}
                         checkedIcon={<DashboardIcon />}
                     />
-                    <Checkbox
-                        checked={selectedType === 'liked'}
-                        onClick={() => handleCheckboxClick('liked')}
-                        {...label}
-                        icon={<FavoriteBorderIcon />}
-                        checkedIcon={<FavoriteIcon />}
-                    />
-                    <Checkbox
-                        checked={selectedType === 'saved'}
-                        onClick={() => handleCheckboxClick('saved')}
-                        {...label}
-                        icon={<BookmarkBorderIcon />}
-                        checkedIcon={<BookmarkIcon />}
-                    />
                     <div className="line-for-icons"></div>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -382,72 +435,19 @@ function MobileProfile() {
                             style={{
                                 display: 'flex',
                                 justifyContent: 'center',
-                                flexDirection: 'column',
-                                textAlign: 'center',
-                                marginTop: '15px'
                             }}>
-                            <h1 className="share-text" >Поделиться фото</h1>
-                            <p style={{ fontSize: '20px' }}>Фото, которыми вы делитесь, будут показываться в вашем профиле.</p>
-                            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <ButtonText
-                                    onClick={handleOpenPostModal}
-                                    variant="text"
-                                    sx={{ width: '275px' }}>
-                                    <span>Поделись своим первым фото</span>
-                                </ButtonText>
-                            </div>
-                        </div> : <div className='Mobile-Cards-Container'>
-                            {createdPosts.map((post: CardTypes) => (
-                                <MobileProfileCards key={post._id} id={post._id} imageUrl={post.imageUrl} likes={post.likes} desc={post.desc} createdAt={post.createdAt} tags={post.tags} user={post.user} />
-                            ))}
+                            <h1>Пока нету публикаций</h1>
                         </div>
-                    )}
-
-                    {selectedType === 'liked' && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                flexDirection: 'column',
-                                textAlign: 'center',
-                                marginTop: '15px'
-                            }}>
-                            <div>
-                                <h1>Лайкнутые посты</h1>
-                                <p>Вот ваша подборка</p>
-                                <div className='Mobile-Cards-Container'>
-                                    {likedPosts.length === 0 ? <div><h2>Пусто</h2></div> : likedPosts.map((post: CardTypes) => (
-                                        <MobileProfileCards key={post._id} id={post._id} imageUrl={post.imageUrl} likes={post.likes} desc={post.desc} createdAt={post.createdAt} tags={post.tags} user={post.user} />
-                                    ))}
-                                </div>
+                            : <div className='Mobile-Cards-Container'>
+                                {createdPosts.map((post: CardTypes) => (
+                                    <MobileProfileCards key={post._id} id={post._id} imageUrl={post.imageUrl} likes={post.likes} desc={post.desc} createdAt={post.createdAt} tags={post.tags} user={post.user} />
+                                ))}
                             </div>
-                        </div>
-                    )}
-
-                    {selectedType === 'saved' && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                flexDirection: 'column',
-                                textAlign: 'center',
-                                marginTop: '15px'
-                            }}>
-                            <div>
-                                <h1>Сохраненные посты</h1>
-                                <p>Вот ваша подборка</p>
-                                <div className='Mobile-Cards-Container'>
-                                    {savedPosts.length === 0 ? <div><h2>Пусто</h2></div> : savedPosts.map((post: CardTypes) => (
-                                        <MobileProfileCards key={post._id} id={post._id} imageUrl={post.imageUrl} likes={post.likes} desc={post.desc} createdAt={post.createdAt} tags={post.tags} user={post.user} />
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
                     )}
                 </div>
-            </div>
+            </div >
         </>
     )
 }
 
-export default MobileProfile
+export default MobileAnotherProfile

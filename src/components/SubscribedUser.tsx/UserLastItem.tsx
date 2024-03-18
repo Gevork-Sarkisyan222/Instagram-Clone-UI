@@ -62,7 +62,7 @@ const UserLastItem: React.FC<IProps> = ({ id, userName, avatarUrl }) => {
         <span style={{ cursor: 'pointer' }} onClick={handleWentToProfile}>
           {userName}
         </span>
-        {subscribe ? (
+        {currentUser?._id === id ? '' : subscribe ? (
           <MuiButton variant="text" onClick={subscibe}>
             Подписаться
           </MuiButton>

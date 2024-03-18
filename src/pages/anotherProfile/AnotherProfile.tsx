@@ -1,6 +1,6 @@
 import React from 'react';
 import './anotherProfile.scss';
-import { Avatar } from '@mui/material';
+import { Avatar, useMediaQuery } from '@mui/material';
 import Button from '@mui/joy/Button';
 import Markdown from 'react-markdown';
 import ProfileList from '../../components/ForProfile/ProfileList';
@@ -24,6 +24,7 @@ import { useNavigate, useParams, useRouteLoaderData } from 'react-router-dom';
 import axios from '../../axios';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
+import MobileAnotherProfile from '../mobile/MobileAnotherProfile';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -262,8 +263,11 @@ const AnotherProfile: React.FC<props> = ({ isOnlineUser, setIsOnlineUser }) => {
     }
   }
 
+  const isMobileScreen = useMediaQuery('(max-width:600px)');
+
+
   if (isAuthenticatedUser) {
-    return (
+    return isMobileScreen ? <MobileAnotherProfile isOnlineUser={isOnlineUser} userData={userData} /> : (
       <>
         {/* =============== */}
         <SubscribersModal
