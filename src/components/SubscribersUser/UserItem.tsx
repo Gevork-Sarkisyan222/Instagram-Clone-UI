@@ -20,9 +20,9 @@ const UserItem: React.FC<IProps> = ({ id, userName, avatarUrl }) => {
 
   const handleWentToProfile = () => {
     if (currentUser?._id === id) {
-      navigate(`/profile`);
+      window.location.href = "/profile";
     } else {
-      navigate(`/profile/${id}`);
+      window.location.href = `/profile/${id}`;
     }
   };
 

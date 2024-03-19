@@ -28,9 +28,9 @@ const UserLastItem: React.FC<IProps> = ({ id, userName, avatarUrl }) => {
 
   const handleWentToProfile = () => {
     if (currentUser?._id === id) {
-      navigate('/profile')
+      window.location.href = "/profile";
     } else {
-      navigate(`/profile/${id}`);
+      window.location.href = `/profile/${id}`;
     }
   };
 
@@ -52,13 +52,12 @@ const UserLastItem: React.FC<IProps> = ({ id, userName, avatarUrl }) => {
   return (
     <>
       <div style={{ justifyContent: 'center' }} className="item">
-        <Link to={`/profile/${id}`}>
-          <Avatar
-            sx={{ width: '44px', height: '44px', cursor: 'pointer' }}
-            alt={userName}
-            src={avatarUrl ? avatarUrl : '/broken-image.jpg'}
-          />
-        </Link>
+        <Avatar
+          onClick={handleWentToProfile}
+          sx={{ width: '44px', height: '44px', cursor: 'pointer' }}
+          alt={userName}
+          src={avatarUrl ? avatarUrl : '/broken-image.jpg'}
+        />
         <span style={{ cursor: 'pointer' }} onClick={handleWentToProfile}>
           {userName}
         </span>

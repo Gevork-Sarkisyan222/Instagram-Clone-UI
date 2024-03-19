@@ -94,7 +94,8 @@ type UserType = {
     _id: string;
     userName: string;
     avatarUrl?: string;
-    checkMark: boolean
+    checkMark: boolean;
+    blocked: boolean
 }
 
 
@@ -419,32 +420,37 @@ const MobileAnotherProfile: React.FC<propsTypes> = ({ userData, isOnlineUser }) 
                     <span style={{ cursor: 'pointer' }} onClick={handleOpenLast}>{userData?.subscribed.length} <span style={{ color: 'grey', display: 'flex' }}>подписок</span></span>
                     <div className="items-last-line"></div>
                 </div>
-                <div className="profile-icons">
-                    <Checkbox
-                        checked={selectedType === 'posts'}
-                        onClick={() => handleCheckboxClick('posts')}
-                        {...label}
-                        icon={<GridViewIcon />}
-                        checkedIcon={<DashboardIcon />}
-                    />
-                    <div className="line-for-icons"></div>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    {selectedType === 'posts' && (
-                        createdPosts.length === 0 ? <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                            }}>
-                            <h1>Пока нету публикаций</h1>
+                {userData?.blocked ?
+                    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+                        <h3 style={{ fontSize: '15px' }}>Это закрытый аккаунт</h3>
+                        <h3 style={{ fontSize: '15px' }}>Подпишитесь, чтобы видеть его/ее фото и видео.</h3>
+                    </div> : <>
+                        <div className="profile-icons">
+                            <Checkbox
+                                checked={selectedType === 'posts'}
+                                onClick={() => handleCheckboxClick('posts')}
+                                {...label}
+                                icon={<GridViewIcon />}
+                                checkedIcon={<DashboardIcon />}
+                            />
+                            <div className="line-for-icons"></div>
                         </div>
-                            : <div className='Mobile-Cards-Container'>
-                                {createdPosts.map((post: CardTypes) => (
-                                    <MobileProfileCards key={post._id} id={post._id} imageUrl={post.imageUrl} likes={post.likes} desc={post.desc} createdAt={post.createdAt} tags={post.tags} user={post.user} />
-                                ))}
-                            </div>
-                    )}
-                </div>
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                            {selectedType === 'posts' && (
+                                createdPosts.length === 0 ? <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                    }}>
+                                    <h1>Пока нету публикаций</h1>
+                                </div>
+                                    : <div className='Mobile-Cards-Container'>
+                                        {createdPosts.map((post: CardTypes) => (
+                                            <MobileProfileCards key={post._id} id={post._id} imageUrl={post.imageUrl} likes={post.likes} desc={post.desc} createdAt={post.createdAt} tags={post.tags} user={post.user} />
+                                        ))}
+                                    </div>
+                            )}
+                        </div></>}
             </div >
         </>
     )

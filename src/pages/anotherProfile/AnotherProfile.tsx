@@ -169,7 +169,7 @@ const AnotherProfile: React.FC<props> = ({ isOnlineUser, setIsOnlineUser }) => {
     };
 
     getUserData();
-  }, []);
+  }, [userData]);
 
   // fetch subscribers
   const [subscribers, setSubscribers] = React.useState<any>([]);
