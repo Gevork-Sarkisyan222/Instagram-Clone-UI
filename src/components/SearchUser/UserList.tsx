@@ -32,6 +32,7 @@ const UserList: React.FC<UserProps> = ({ id, avatarUrl, userName, checkMark }) =
               onClick={handleWentToProifle}
               onClickCapture={() => closeModal.current?.click()}
               sx={{ cursor: 'pointer' }}
+              alt={userName}
               src={avatarUrl ? avatarUrl : '/broken-image.jpg'}
             />
             <span
