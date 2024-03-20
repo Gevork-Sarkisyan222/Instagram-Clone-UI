@@ -1,7 +1,7 @@
 import React from 'react'
 import UserBox from './UserBox';
 import './Chat.scss'
-import { Avatar } from '@mui/material';
+import { Avatar, useMediaQuery } from '@mui/material';
 import CallIcon from '@mui/icons-material/Call';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import MessageInput from './MessageInput';
@@ -15,6 +15,7 @@ import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import ErrorToLogin from '../../components/ErrorToLogin';
 import { io } from 'socket.io-client'
+import MobileChat from '../mobile/MobileChat/MobileChat';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -251,10 +252,13 @@ const Chat: React.FC<PropsTypes> = ({ socket, isOnlineUser, setIsOnlineUser }) =
     const alreadyOnline = checkIfOnline(convUser?._id)
     console.log('arrivalMessage after', arrivalMessage)
 
+    const isMobileScreen = useMediaQuery('(max-width:600px)');
+
+
 
     if (isAuthenticatedUser) {
         return (
-            <div className='Main-Chat'>
+            isMobileScreen ? <MobileChat /> : <div className='Main-Chat'>
                 <div className='left-userSide'>
                     <section className='text-section'>
                         <h2>Сообщения</h2>
