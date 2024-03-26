@@ -56,9 +56,10 @@ type MessageType = {
     createdAt: string
 }
 
-type UserType = {
+export type UserType = {
+    _id: string;
     userName: string;
-    avatarUrl: string
+    avatarUrl?: string
 }
 
 interface PropsTypes {
@@ -172,8 +173,6 @@ const Chat: React.FC<PropsTypes> = ({ socket, isOnlineUser, setIsOnlineUser }) =
 
 
 
-    console.log('current chat here >', currentChat)
-
     React.useEffect(() => {
         const getMessages = async () => {
             try {
@@ -258,7 +257,7 @@ const Chat: React.FC<PropsTypes> = ({ socket, isOnlineUser, setIsOnlineUser }) =
 
     if (isAuthenticatedUser) {
         return (
-            isMobileScreen ? <MobileChat /> : <div className='Main-Chat'>
+            isMobileScreen ? <MobileChat conversations={conversations} convUser={convUser} currentChat={currentChat} setCurrentChat={setCurrentChat} /> : <div className='Main-Chat'>
                 <div className='left-userSide'>
                     <section className='text-section'>
                         <h2>Сообщения</h2>

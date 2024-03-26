@@ -53,10 +53,10 @@ interface MessagePropsTypes {
     setEditedMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
-type SenderUser = {
+export type SenderUser = {
     _id: string;
     userName: string;
-    avatarUrl: string;
+    avatarUrl?: string;
 }
 
 const MessageSection: React.FC<MessagePropsTypes> = ({ message, own, setMessages, socket, currentChat, editedMessage, setEditedMessage }) => {
